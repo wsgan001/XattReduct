@@ -1,0 +1,30 @@
+本章有13个来自UCI上的数据集用来做测试。数据集的详细情况见表~\ref{tab:chapter5:datainfo}。这里需要指出的，因为UCI上全部是符号属性的高维数据有限，因此，我们选取的数据集有连续性数值属性，需要进行离散化的预处理。我们用MDL(Minimum Description Length)\cite{Fayyad1993}方法，有监督的离散化连续性数值数据。
+
+\comment{
+%##############DataINFO#############
+\begin{table}
+\centering
+\caption{属性选择所用数据集信息}\label{tab:chapter5:datainfo}
+\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lcccl}
+\toprule
+ $DataSet$ & $\#Instances$ & $\#Attribute$ & $\#Classes$ & $Abstract$\\
+\midrule
+Colic & 368 & 22 & 2 & Horse Colic Data Set; Well documented attributes.\\
+Credit & 690 & 15 & 2 & This data concerns credit card applications; Good mix of attributes.\\
+Diabetes & 768 & 8 & 2 & From National Institute of Diabetes and Digestive and Kidney Diseases.\\
+Heart-cleveland & 303 & 13 & 5 & Heart Disease Data Set.\\
+Heart-hungarian & 294 & 13 & 5 & Heart Disease Data Set.\\
+Heart-statlog & 270 & 13 & 2 & Heart Disease Data Set.\\
+Hepatitis & 155 & 19 & 2 & From G.Gong: CMU; Includes cost data (donated by Peter Turney).\\
+Ionosphere & 351 & 34 & 2 & Classification of radar returns from the ionosphere.\\
+Musk2 & 707 & 166 & 2 & Musk (Version 2) Data Set.\\
+Promoters & 106 & 57 & 2 & E. Coli promoter gene sequences (DNA).\\
+SPECT & 267 & 22 & 2 & Single Proton Emission Computed Tomography (SPECT) images.\\
+Voting & 435 & 16 & 2 & 1984 United Stated Congressional Voting Records.\\
+WDBC & 569 & 30 & 2 & Breast Cancer Wisconsin (Diagnostic) Data Set.\\
+\bottomrule
+\end{tabular}
+}%
+\end{table}
+}

@@ -1,0 +1,526 @@
+\chapter{基于权值投票的半监督聚类集成}
+\label{chapter:semiclusterensemble}
+
+%聚类是一个半监督学习的主要研究领域，其任务是从无标签的数据中发现数据的内在结构。
+
+在过去的十几年中，集成学习方法已经逐渐成为机器学习中最热门的研究领域之一。该方法是训练多个分类器然后将它们组合起来对一个新的对象进行预测\cite{Dietterich2000}。 文献\cite{Seeger2001} 阐述了集成学习的优点，由于训练集的规模有限，不能精确得到假设模型或模型，导致模型产生结果的准确率不一致，集成学习即是通过把多种学习方法融合来规避单一算法的不足。因为一个集成模型的分类效果和归纳能力大多数情况要比单个分类器的好\cite{Hansen1990}，所以集成学习方法被广泛应用于多个领域，其中具有代表性的算法有Bagging\cite{Breiman1996}，AdaBoost\cite{Schapire1999}，随机森林\cite{Breiman2001} 等。
+
+2002年, Strehl等人提出“聚类集成”(Cluster Ensembles)的概念，其定义是指关于一个数据集的多个划分(Partitions)组合成为一个统一聚类结果的方法\cite{Strehl2002}。 这多个划分也称作聚类集合，每个划分称为聚类成员。2007年, Gionis 等人从另一个角度给出了一种描述: 给定一个聚类集合,聚类集成(Clustering Aggregation)的目标就是要寻找一个聚类使其所有的聚类成员尽可能一致\cite{Gionis2007}。 因此我们可以总结为, 聚类集成是利用多个聚类结果组合起来成为一个统一的聚类结果, 这个结果在最大程度上与聚类成员的结果相符合或一致\cite{YangCaoYuan2011}。 聚类集成法相对于单个聚类算法有如下优势\cite{YangLinBin2005}：
+\begin{enumerate}[1)]
+  \item 鲁棒性：在不同的数据集上，聚类集成的均衡性能更好。
+  \item 适用性：可以获得单个聚类算法无法获得的结果。
+  \item 稳定性：由于聚类集成的平衡规则，噪声数据对最终的聚类结果影响不大。
+  \item 并行和可扩展性：多个聚类方法可并行进行，然后对聚类结果进行集成。
+\end{enumerate}
+
+这里需要指出的是，由于训练数据集无类别标签，因此聚类集成比传统的有监督集成要困难的多\cite{Zhou2006}。下一节，我们对聚类集成做一个简单的概述。
+\section{聚类集成}
+%论文：半监督聚类集成模型研究
+
+在Strehl\cite{Strehl2002}等提出的最初的聚类集成的定义中，假定数据集的个数为$N$，表示为
+$\mathbf{X}=\{x_1,x_2,\dots,x_N\}$，在数据集$\mathbf{X}$ 上执行$M$次有差异的聚类算法，并得到$M$个聚类结果（聚类成员）
+$\Pi= \{\pi_1,\pi_2,\dots,\pi_M\}$，每个聚类成员$\pi_j,(j=1,2,\dots,M)$ 表示第$j$ 个聚类的划分结果的标签集。
+$x_i\rightarrow \{\pi_1(x_i),\pi_2(x_i),\dots,\pi_M(x_i)\}$表示第$i$个对象对应所有聚类成员中的划分结果，$\pi_j(x_i)$是第$i$ 个对象在$\pi_j$ 中的类标签。
+最后通过设计一个一致性函数对$M$个聚类结果进行集成，得到一个最终的聚类结果$\pi^*$，整个聚类集成过程如图~\ref{fig:chapter3:cluster:ensemble}。
+
+\begin{figure}
+  \centering
+  % Requires \usepackage{graphicx}
+  \center
+  \includegraphics[width=0.38\textwidth,angle=90]{./Chapters/Part1/fig0.eps}\\
+  \caption{无监督聚类集成过程示意图}\label{fig:chapter3:cluster:ensemble}
+\end{figure}
+
+
+与监督集成学习类似，目前聚类集成算法要解决的主要问题有两个\cite{Topchy2003}：
+\begin{enumerate}[1)]
+  \item 集簇的多样性(Diversity)：如何产生差异性的聚类成员从而形成一个聚类集合。
+  \item 一致性函数(Consensus Function)：如何组合聚类集合成为一个统一聚类结果。
+\end{enumerate}
+
+在监督集成学习中保证多样性是集成学习方法好坏的关键因素，因此，聚类成员的差异性与多样性也是决定最终集成效果的重要特征；一致性函数的作用是最大程度地利用各个聚类结果的信息，并融合所有聚类结果结合成为一个统一的聚类结果。现阶段国内外研究的热点还放在第二个问题上，也就是如何从聚类集合中得到一个统一的聚类结果，所谓的一致性函数的研究上。
+
+
+%图2-3描述了聚类集成研究的具体方向结构图[16]。
+
+\subsection{聚类成员的产生方法}
+
+在文献\cite{Dietterich2000}中，Thomas G.等人对聚类成员差异性和多样性的影响问题进行了研究，并指出较大差异的聚类成员可以组合得到聚类效果。而在文献\cite{Kuncheva2004} 中，Kuncheva, L.I 通过实验发现只有适量的差异才能获得较好的集成结果，即差异性和聚类结果质量并非单调递增的关系，差异性越大不一定能得到越好的集成结果，差异性过大反而会降低聚类集成的质量。现有产生基聚类成员的方法如下：
+
+\begin{enumerate}[1)]
+  \item 不同算法：使用不同的聚类算法对数据集进行聚类划分，从而得到多个不同的聚类成员，如文献\cite{Hadjitodorov2006}。
+
+   \item 相同算法不同参数：对同一个聚类算法，通过调整算法的初始化参数，即对参数赋予不同的初始值，得到有差异性的基聚类成员。例如k-Means算法初始点的选取对结果影响很大，通过选取初始点的不同就可以产生不同的聚类结果\cite{Zhou2006,Yang2006}。
+
+    \item 不同的对象子集：针对原始数据集，采用确定性、重抽样等采样方法从对象空间得到一组对象子集，然后基于对象子集再聚类从而获得有差异的聚类成员，如文献\cite{Minaei-Bidgoli2004}。
+
+    \item	不同的特征子集：通过对特征空间选取待聚类样本的不同特征，然后再特征子集上进行聚类得到不同的聚类成员，如文献\cite{Topchy2003,Topchy2004}。
+
+    \item	映射子空间：通过对数据变换空间，对投影到新的子空间的数据集进行聚类从而得到有差异的聚类成员，常用的特征映射方法如随机投影、PCA 等\cite{Topchy2003}。
+
+    \item	添加噪音：在待聚类样本中人为地添加部分噪声数据从而达到生成有差异的聚类成员\cite{LuoHuiLan2007}。
+%在文献聚类集成方法研究里有详细阐述
+\end{enumerate}
+
+
+\subsection{一致性函数}
+一致性函数是一个函数或方法，它将聚类成员进行集成，并最终得到一个统一的聚类结果\cite{LuoHuiLan2007,YangCaoYuan2011}。 目前存在许多一致性函数，
+%如投票法、超图划分、基于共协矩阵的证据积累、概率积累等。
+如投票法，共联矩阵，超图法，互信息法，混合模型法和其他方法等。
+
+
+\begin{enumerate}[1)]
+  \item 投票法
+
+  %投票法在监督式学习的分类集成中很有效, 但在聚类集成中存在一个问题:聚类的簇标签对应问题。例如，数据集有7个对象$\{a,b,c,d,e,f,g\}$ , 有两个划分 $C_1$ 和$C_2$，其中 $C_1=\{1,1,2,2,2,3,3\}$和$C_2\{2,2,3,3,3,1,1\}$。表面上看$C_1$ 和$C_2$ 不同，但逻辑上它们是等价的，都把数据集分为3个簇：$ \{ \{ a, b\} , \{ c, d, e\} , \{ f , g\} \}$。 因此标签统一是使用投票法集成的必须环节，投票法只有当聚类成员的簇的个数相等并且聚类结果的标签向量可参考某个划分进行匹配才比较有效。在聚类集成中要利用簇标签，必须先解决标签的对应问题。 Strehl 等人提出一个簇表示方法, 通过严格控制簇标签的生成顺序来避免多个数据划分逻辑上等价\cite{Strehl2002}。2006 年，Zhou 等人 \cite{Zhou2006} 认为一个聚类器由数据集的多个数据划分组成，并提出一个簇排列算法,对聚类成员中的簇, 计算两个簇间重叠的数据点个数作为相似度,据此寻找聚类成员中逻辑等价的簇。首先寻找出聚类成员中逻辑等价的簇, 对齐所有聚类结果的簇, 然后计算不同划分间重叠的数据点数目, 判断两个簇是否相似。他们提出了4个基于投票的聚类集成：
+%  \begin{description}
+%    \item[(a)] voting：使用了多数投票策略，数据点被划分到出现次数最多的簇中；
+%    \item[(b)] weighted-voting：在投票中使用互信息值作为权重；
+%    \item[(c)] selective voting： 使用互信息值作为权重选择可用于集成的聚类成员，然后使用voting 划分数据集；
+%    \item[(d)] selective weighted-voting：使用互信息值, 既用于选择子集也用于投票
+%  \end{description}
+
+   % 2003年，Dudoit和J.Fridiyand在文献\cite{Dudoit2003} 中将每个聚类成员产生的簇标签统一，然后利用投票进行聚类集成。但这明显有个缺点，这要求每个聚类成员产生相同数量的簇，并且这些簇之间存在对应关系，能匹配起来。
+
+
+投票法的基本思想是尽可能多地共享聚类成员对数据对象的分类信息，根据聚类成员对数据对象的划分进行投票，计算数据对象被分到每个簇的投票比例，如文献\cite{Strehl2002,Dudoit2003,Zhou2006}。
+%依据多数投票超过一定阈值(一般大于等于0.5) 来将其划分到这个簇中。
+投票法的优点是简单，易于实现，充分利用了聚类成员对数据点的分类信息；缺点是需要处理簇标签对应问题，只依赖数据点和簇标签之间的关联划分数据。但这种关联较为脆弱，尤其是当聚类成员的质量普遍较差的时候，使用投票法可能得不到较好的数据划分。
+
+  \item 共联矩阵(Co-association Matrix)
+
+  %2001年, Fred认为可以在多个数据划分中找到一个一致的聚类结果。他利用聚类成员对数据点的划分信息,计算数据点对同时被分到同一个簇的次数,作为两个数据点是否属于同一个簇的投票。若投票过半, 则这两个数据点划分到同一个簇中\cite{Fred2001}, 据此提出了共联矩阵(Co-association Matrix) 的概念,并作为相似度矩阵来划分数据。
+
+  该方法将得到的聚类成员构造成$N\times N$的共联矩阵，该共联矩阵的意义在于统计对象之间在所有聚类划分中处于同一类的频率，共联矩阵可以被作为度量数据间相似性的一个矩阵，每个元素代表对象间的相似度，如文献\cite{Fred2001,Fred2002}
+  %，其定义如下：
+
+%\begin{equation}\label{equ:chapter3:comatrix}
+%  C\text{o-association}(x_i,x_j)=\frac{1}{H}\sum_{h=1}^{H}\delta(\pi_h(x_i),\pi_h(x_j))
+%  \end{equation}
+%\begin{equation}\label{equ:chapter3:comatrix:delta}
+%  \delta(x,y)\left\{
+%\begin{array}{cl}
+%  1 & if \; x=y \\
+%  0 & otherwise
+%\end{array}
+%  \right.
+%\end{equation}
+%
+%共联矩阵是一个对称矩阵，公式~\ref{equ:chapter3:comatrix}表示共联矩阵第$i$ 行第$j$ 列对应的元素，即$x_i$和$x_j$ 被划分为同一个类占总体划分的比例。通过共联矩阵集成有两种方法，一是给定一个阈值$\sigma$， 一般$\sigma$ 的值取0.5，如果式~\ref{equ:chapter3:comatrix} 的值大于等于阈值$\sigma$，则认为两个对象在集成结果中应该被划分到一个的簇中；二是把共联矩阵当成描述数据间的一个相似性矩阵，利用层次聚类算法或$MST$算法计算最终的划分。
+%
+%在第二年，也就是2002年，Fred和Jain在文献\cite{Fred2002} 中对此算法加以改进，他们计算两个数据点被聚在同一个簇中的次数占聚类成员数的比例，以此作为数据点对间的相似性度量。然后基于此相似性度量用MST(Minimum Spanning Tree) 或凝聚型层次聚类算法SL(Single-Link) 来完成最终的聚类集成。
+
+基于互联合矩阵的一致性函数的缺点是它的计算和存储复杂性是二次的，所以不太适用规模较大的数据。
+
+
+  \item 超图划分
+
+  一般图的边只有两个顶点, 超图的一条超边可以有任意多个顶点。聚类成员可以用超图表示:超边表示簇, 超边的顶点表示属于该簇的数据点。将聚类集成转化为超图的最小切割问题, 使用基于图论的聚类算法进行聚类集成\cite{Strehl2002}。
+
+%  2002年, Strehl等人提出了3种基于超图划分的集成方法\cite{Strehl2002}，该方法基于聚类成员的标签转换得到一个超图，然后通过构造该超图的邻接矩阵$\mathbf{H}$, $\mathbf{H}$ 的每行代表了一个数据对象，而每列则代表一条超边。超边上为1 的的值代表对应H 中行上的数据对象归属于同一簇，即这些对象归属于这条超边，超边上为0, 反之，如图~\ref{fig:chapter3:hypergraph} 所示。
+%
+%\begin{figure}
+%  \centering
+%  % Requires \usepackage{graphicx}
+%  \includegraphics[width=5in]{./Chapters/Part1/fig2.eps}\\
+%  \caption{超图的邻接矩阵$\mathbf{H}$的示意图}\label{fig:chapter3:hypergraph}
+%\end{figure}
+%\begin{figure}
+%  \centering
+%  % Requires \usepackage{graphicx}
+%  \includegraphics[width=5.3in]{./Chapters/Part1/fig3.eps}\\
+%  \caption{CSPA算法中的相似矩阵$\mathbf{S}$示意图}\label{fig:chapter3:CSPA}
+%\end{figure}
+%
+%  \begin{description}
+%    \item[(a)] Cluster-based Similarity Partitioning Algorithm (CSPA) 是基于实例的超图划分, 首先计算共协矩阵作为相似度矩阵, 然后以数据点为顶点, 以相似度值为边的权重构建超图, 若两对象在所有的基聚类成员中都属于同一个簇，则认为它们完全相似。若两对象在所有的基聚类成员中都不属于同一个簇，则认为它们是完全不同。类似于共联矩阵法，CSPA 首先定义相似矩阵$\mathbf{S}$ 为：
+%
+%        \begin{equation}\label{equ:chapter3:cspa}
+%          S=\frac{1}{h}\mathbf{H}\cdot \mathbf{H}^T
+%        \end{equation}
+%
+%        得到$S$后，如图~\ref{fig:chapter3:CSPA}所示，可用一种基于相似性的聚类算法完成聚类任务，或者使用图分割算法METIS划分数据集，得到聚类结果；
+%    \item[(b)] HyperGraph-Partitioning Algorithm (HGPA)是基于聚类的超图划分，它把聚类集体中的每个簇表示成一条超边，它连接所有在此簇中的数据点，如图~\ref{fig:chapter3:HGPA}所示，每条超边的权重一样，然后利用超图划分算法HMETIS\cite{Karypis1997}得到最终聚类结果，为了防止聚类集体的集簇过于不平衡，对每个聚类成员加了约束条件：$k\cdot \max_{\ell\in\{1,2,\dots,k\}}\frac{n_{\ell}}{n}\leqslant1.05$；
+%        \begin{figure}
+%        \begin{minipage}{0.6\linewidth}
+%        \centering
+%        \includegraphics[width=1\textwidth]{./Chapters/Part1/fig4.eps}
+%        \caption{HGPA算法中的超边示意图}\label{fig:chapter3:HGPA}
+%        \end{minipage}%
+%        \begin{minipage}{0.4\linewidth}
+%        \centering
+%        \includegraphics[width=1\textwidth]{./Chapters/Part1/fig5.eps}
+%         \caption{MCLA算法示意图}\label{fig:chapter3:MCLA}
+%        \end{minipage}%
+%
+%        \end{figure}
+%    \item[(c)] Meta-CLustering Algorithm (MCLA)是基于聚类的超图划分，是对聚类成员再进行聚类。它以簇为顶点，簇之间共同的数据点占所有数据的比例作为边权重，然后在此基础上再利用图形划分算法METIS\cite{Karypis1998} 将簇划分成不同的组，最后每个点根据它在不同组中出现的次数来选择它所在的组从而构成最终的聚类集成结果，如图所示，其中，$\circ$，$\times$和$+$ 分别表示不同的聚类成员，边的颜色深浅表示权重的大小。
+% %        \begin{figure}
+%%          \centering
+%%          % Requires \usepackage{graphicx}
+%%          \includegraphics[width=5.3in]{./Chapters/Part1/fig5.eps}\\
+%%          \caption{MCLA算法示意图}\label{fig:chapter3:MCLA}
+%%        \end{figure}
+%        由于要计算点对间的相似性，CSPA的时间复杂性是二次的，而MCLA和HG 队的时间复杂性是一次的\cite{LuoHuiLan2007}。2004年，Xiaoli Zhang Fern和Carla E.Brodley 在文献\cite{Fern2004} 中提出了一种将聚类集体表示成二分图，也就是数据与簇都表示成顶点，如果一个数据在一个簇中，则相应这两个顶点间有一条边相连，所有边的权重相同，然后同样利用图形划分算法得到聚。他们认为CSPA只利用了点之间的相似性信息来构造图形，MCLA只利用了簇之间的相似性信息来构造图形，所以在构造超图过程中信息会有丢失\cite{Luo2006}。 因此他们提出一种基于实例和聚类的超图划分方法 HBGF( Hybrid Bipartite Graph Formulation)，同时把数据点和簇作为顶点，把簇和在该簇中的所有数据点之间的连接作为超边,所有边的权重相同，构造一个二分图，然后利用图划分算法分割超图，得到最终的聚类结果。
+%
+%
+%
+%       % 2006 年，Muna Al-Razgan和Carlotta Domeniconi 在文献\cite{Al-Razgan2006} 中就如何由不同参数的LAC算法(Locally Adaptive clustering)\cite{Domeniconi2004} 产生的加权聚类集体进行集成提出了二种基于图形划分的集成方法WSPA和WBPA。
+%
+%  \end{description}
+          基于超图划分的聚类集成，优点是利用聚类成员来表示数据集的结构，考虑了同簇中数据点之间的关联和不同数据划分之间的关联；但这几种方法都有一定的局限性，因为它们都基于图形划分算法，所以结果也受所采用的图形划分算法的影响。比如METIS 和HMETIS算法要求用户输入类的个数，然后它们趋向于将图形划分成相似大小的部分，也就是说它们趋向于发现具有相似大小的类\cite{LuoHuiLan2007}。
+  \item 互信息法
+
+  信息论中的互信息是度量两个事件关联性的一种方式。在聚类集成中，互信
+息是一种可测量不同数据分布统计信息的参考指标。假设$\pi^a$和$\pi^b$是两个聚类成员，$k^a$ 和$k^b$ 分别表示$\pi^a$和$\pi^b$ 的簇的数量，$n_i$表示$\pi^a$ 中归属于类$C^a_i$ 的对象数量，$n_j$表示$\pi^b$中归属于类$C^b_j$的对象数量，$n_ij$ 表示同时属于$\pi^a$中类$C^a_i$和$\pi^b$ 中类$C^b_j$ 的对象数量，$n$ 表示总共的对象个数。则范围是$[0,1]$ 的归一化互信息定义为
+\begin{equation}\label{equ:chapter3:nmi}
+  \mathbf{\Phi}^{NMI}(\pi^a,\pi^b)=\frac{\sum^{k^a}_{i=1}\sum^{k^b}_{j=1}\log\bigg(\frac{n\cdot n_{ij}}{n_i n_j}\bigg)}{\sqrt{\bigg(\sum^{k^a}_{i=1}n_i\log\frac{n_i}{n}\bigg)\bigg(\sum^{k^b}_{j=1}n_j\log\frac{n_j}{n}\bigg)}}
+\end{equation}
+
+通过互信息法设计的共识函数的目标是寻找一个与所有聚类成员之间互信息最大的聚类划分，目标划分可定义为\cite{Strehl2002}：
+\begin{equation}\label{equ:chapter3:nmi:obj}
+  \pi^{opt}=\argmax_{\pi}\sum^{M}_{m=1}\mathbf{\Phi}^{NMI}(\pi,\pi^m)
+\end{equation}
+当目标簇的数量确定时，搜索最佳划分的问题就转换为求解经典类内的最小方差问题。
+
+\item 混合模型法
+
+混合模型法事先假设聚类集成的结果是一个多元多项式分布的混合模型\cite{Topchy2005}，然后使用EM算法作为后续聚类得到该混合模型的极大似然估计，从而得到集成后聚类划分。该方法需要估计的参数较多，但它不需要进行诸如投票法所面临的标签匹配问题，具有处理丢失数据的能力，并且算法复杂性也比共联矩阵法低。
+
+\item 其他
+
+文献\cite{LuoHuiLan2007}基于信息理论，通过求解目标函数最优化来求解聚类集成问题，最后利用遗传算法求解最后的聚类划分。Yang等\cite{Yang2006a} 使用ART神经网络作为共识函数，对由改进的蚁群算法产生的多个聚类结果进行最后的聚类。
+
+
+
+\end{enumerate}
+
+
+
+
+
+
+%\section{k-Modes算法}
+%%聚类算法的研究
+%1998年，Huang在文献\cite{Huang1997}中提出符号属性数据聚类算法k-Modes，它将k-Means 改变成概念型数据聚类算法。k-Modes 聚类算法是通过对k-Means聚类算法的扩展，使其应用于符号属性数据聚类。它采用简单匹配方法度量同一符号属性下两个属性值之间的距离,用模式(Modes) 代替k-Means 聚类算法中的均值(Means)，使用基于频率的方法来更新模式点(Inodes) 以收敛到聚类准则函数的极值点。
+%
+%%1998 年，Huang为克服K-means算法仅适合于数值属性据聚类的局限性，
+%%提出了一种适合于分类属性数据聚类的 K-modes 算法。该算法对K-means进行了3点扩展：引入了处理分类对象的新的相异性度量方法(简单的相异性度量匹配模式)，使用 modes 代替means，并在聚类过程中使用基于频度的方法修正 modes，以使聚类代价函数值最小化。
+%%
+%%这些扩展允许人们能够直接使用K-means范例聚类有分类属性的数据，无须对数据进行变换。K-modes 算法的另一个优点是modes 能给出类的特性描述，这对聚类结果的解释是非常重要的。事实上，K-modes算法比K-means算法能够更快收敛。Huang使用众所周知的大豆疾病数据集对其算法进行了测试，结果表明，K-mode算法具有很好的聚类性能。进一步地，他用包含50万条记录和34 个分类属性的健康保险数据集进行了测试，结果证明，该算法在(聚类的)类数和记录数两个方面是真正可伸缩的。
+%%
+%%与 K-means算法一样，K-modes算法也会产生局部最优解，依赖于初始化modes的选择和数据集中数据对象的次序。初始化modes 的选择策略尚需进一步研究。
+%%1999 年，Huang等人\cite{Huang1999}证明了经过有限次迭代 K-modes 算法仅能收敛于局部最小值.
+%%
+%%在K-means算法中，mean为类簇中心或称为质心，是指一个类簇中所有对象关于属性的均值。最初可随机指定。在K-modes算法中，modes可定义如下：设 $\mathbf{X}=\{X_1,X_2,\ldots,X_n\}$ 是一个数据集，$\forall x_i\in\mathbf{X}$ 由$m$ 个分类属性${a_1,a_2,\ldots,a_m}$来描述，$X_i$可表示成向量$<x_{i1},x_{i2},\ldots,x_{im}>$，又可表示成属性- 值对的合取式$[a_1=x_{i1}]\wedge\ldots\wedge[a_m=x_{im}]$；$Q$是$\mathbf{X}$ 的一个mode，$Q$可表示成向量$<q_1,q_2,\ldots,q_m>$，也可表示成属性-值对的合取式$[a_1=q_1]\wedge\ldots\wedge[a_m=q_m]$，Q需使$\sum_{i=1,\ldots,m}d_c(X_i,Q)$
+%%取最小值，$d_c(X_i,Q)$表示$X_i$与$Q$之间的距离，也叫做差异测度，Q不必是 X 的一个元素。
+%%
+%%
+%%
+%%
+%%
+%%%相异度量的kmodes聚类算法研究
+%%1998年，Huang提出了 k-modes聚类算法，这一方法对k-means聚类方法进行了扩展。该算法采用简单的0-1匹配方法来计算不同对象在同一分类属性下两个属性值之间的距离。由于其算法简便，因此被广泛应用于科学和工业中的各个领域。
+%
+%k-modes聚类算法是一种基于划分的方法，它通过不断的迭代对数据集进行聚类，当算法达到某一条件时收敛，此时迭代过程就会终止，最终输出聚类结果。传统的k-modes 聚类算法采用简单的0-1方法作为对象与中心点之间的相异度度量。由于度量方法简单并且算法思想容易实现，因此传统的k-modes聚类方法成为最常用的聚类算法之一。
+%
+%该算法解决的是将$n$个对象构成的非空集合义$\mathbf{X}=\{X_1,X_2,\ldots,X_n\}$ 划分为k个聚类的问题。算法首先随机或规定$k$个对象作为$k$个子类的类中心，通过隶属度矩阵将其佘的数据对象划分到离初始类中心最近的子类中，从而形成$k$个初始的聚类分布。然后通过更新聚类中心的方法将分配完的每一个子类重新计算类中心，再通过隶属度矩阵的重新计算，得到基于新的类中心的聚类划分。通过多次迭代这样的过程，当聚类中心不再发生变化时，也就是数据对象比较好的分配到各自的子类当中时，聚类准则函数收敛，聚类划分结束。否则继续进行迭代过程，直到聚类准则函数收敛为止。这一算法中聚类准则函数采用的是误差平方和的聚类准则。本算法的特点是在每一次的迭代过程中，都要对数据集中的所有数据进行计算分配，并对划分进行调整，也都要再次重新计算类中心。如果在某次迭代的过程中，每一个数据点的位置不再发生改变，并且相应的类中心也没发生变化，则表示聚类准则函数收敛，算法结束。
+%
+%
+%%相异度度量方法是用来判断所给的数据集中两个不同对象之间的相异程度。它作为聚类算法中最基础的方法，对于如何将不同的对象划分到相应的子类中起到了决定性的作用。这一方法主要用于对象与类中心之间相异程度的计算。
+%
+%
+%
+%
+%
+%%传统k-modes算法的优点在于：
+%%\begin{enumerate}
+%%  \item k-modes算法是对k-means算法的扩展，将处理分类对象的相异度度量方法引
+%%入到k-means算法中，使用mode代替原有的mean,解决了 k-means聚类算法只能处理
+%%数值型数据的情况，提出了针对分类数据的聚类方法。
+%%
+%%  \item -modes算法不仅能够对小型数据集有好的处理结果，同样对于大型的数据集
+%%也能进行高效的处理，这一算法的时间复杂度为$O(tnkm)$，其中$t$ 为迭代的次数，$n$ 为数据集中对象的个数，$k$为划分子类的个数，$m$为属性个数。
+%%  \item k-modes算法由于是对k-means算法的扩展，这使得这一算法能够直接使用
+%%k-means范例来对分类数据进行聚类，这就免去了对于原有数据进行变换的麻烦，有效
+%%的减少了操作步骤，对于k-means聚类算法有好的可持续性。
+%%  \item k-modes算法用mode代替了 mean,主要是因为mode能给出类的特性描述，
+%%这一代替方法不仅使算法能够处理分类型数据，而且为聚类结果的解释带来了方便。
+%%  \item 算法是收敛的。
+%%\end{enumerate}
+%%
+%%传统k-modes算法的缺点在于-
+%%
+%%\begin{enumerate}
+%%  \item 这一聚类算法被Huang证明了仅能够收敛于局部最小值，不能收敛到全局最小
+%%值\cite{Huang1999}。
+%%  \item k-modes聚类算法的聚类结果过分的依赖于初始类中心的选择以及数据集中对
+%%象的次序，这导致当初始类中心选择不同或者数据集对象次序变化时，得到的聚类结果
+%%也可能会改变，没有好的强壮性。
+%%  \item 聚类结果中的modes不具有唯一性。
+%%  \item k-modes聚类算法的简单匹配方法计算对象与mode之间的相异程度不能充分
+%%反映对象和类之间的相异性。
+%%  \item 弱化了类内的相似性，没有充分反映同一分类属性下两个属性值之间的距离。
+%%\end{enumerate}
+
+\section{基于权值投票的半监督聚类集成算法}
+本文提出了一种基于权值投票的符号属性数据半监督聚类集成算法，如图~\ref{fig:chapter3:cluster:semiensemble}所示。下文将对该算法进行详细的阐述。首先，我们先对半监督聚类问题进行描述。
+\begin{figure}
+  \centering
+  % Requires \usepackage{graphicx}
+  \center
+  \includegraphics[width=0.38\textwidth,angle=90]{./Chapters/Part1/fig1.eps}\\
+  \caption{半监督集成聚类流程图}\label{fig:chapter3:cluster:semiensemble}
+\end{figure}
+
+假设$\mathbf{X}=\mathbf{X}^L\bigcup\mathbf{X}^U=\{x_1,x_2,\ldots,x_n\}$ 表示一个属性个数为$m$的数据集。其中，$\mathbf{X}^L$代表有类标的数据集，对象$X^l_i\in \mathbf{X}^L$ 可以表示成为$X^l_i=[x_{i1},x_{i2},\ldots,x_{im},d_i]$，其中的$d_i$表示$X^l_i$的类标；$\mathbf{X}^U$ 代表无类标的数据集对象$X^u_i\in \mathbf{X}^U$ 可以表示成为$X^u_i=[x_{i1},x_{i2},\ldots,x_{im}]$。
+
+一个聚类器将数据集$\mathbf{X}$划分成$k$个集簇，并且可以表示成一个标签向量(label vector) $\pi\in \mathbf{N}^n$，指示对象$x_1$被分配到第$\pi_i$个集簇中，也就是集簇$C_{\pi_i}$中，其中$\pi_i\in\{1,2,\ldots,k\}$。
+
+
+%这$k$ 个集簇实际上是一个划分，多个聚类器将$\mathbf{X}$ 分成多个划分，也就是多个聚类结果，记做$\Pi=\{\pi_1,\pi_2,\ldots,\pi_t\}$
+一个大小为$t$的聚类集成框架包含$t$个聚类器，这$t$ 个聚类器得到的聚类结果表示为$\Pi=\{\pi_1,\pi_2,\ldots,\pi_t\}$。通过一个一致性函数$\mathbf{F}$得到一个最终的聚类结果$\pi^{*}=\mathbf{F}(\Pi)$。
+
+\subsection{生成不同的聚类结果}
+为了产生多个不同的聚类结果，本文采用k-Modes算法作为基本的聚类算法。
+1998年，Huang在文献\cite{Huang1997}中提出符号属性数据聚类算法k-Modes，它将k-Means改变成概念型数据聚类算法。k-Modes聚类算法是通过对k-Means聚类算法的扩展，使其应用于符号属性数据聚类。它采用简单匹配方法度量同一符号属性下两个属性值之间的距离,用模式(Modes) 代替k-Means聚类算法中的均值(Means)，使用基于频率的方法来更新模式点以收敛到聚类准则函数的极值点。
+
+与k-Means算法相同，k-Modes算法也对初始点的选择敏感，因此对k-Modes算法，我们选取不同的初始中心点来得到不同的聚类结果。
+
+k-Modes聚类算法其字符型数据描述为：设$\mathbf{X}=\{X_1,X_2,\ldots,X_n\}$为$n$ 个对象构成的非空有限集合，$\mathbf{A}=\{A_1,A_2,\ldots,A_m\}$是由$m$个符号属性构成的非空有限集合，$X_i$被符号属性集$\mathbf{A}$描述为$X_i=[x_{i,1},x_{i,2},\ldots,x_{i,m}]$，每个属性$A_j$的值域为$DOM(A_j)=\{a^{(1)}_j,a^{(2)}_j,\ldots,a^{(p_j)}_j\}$，其中$p_j$为属性$A_j$ 符号数据类别的个数。传统的k-Modes聚类算法采用简单的0-1方法作为对象与中心点之间的相异度度量。
+
+对于符号属性的数据，定义的差异测度为
+\begin{equation}\label{equ:chapter3:kmodes:dis}
+  d(X_i,Z_l)=\sum^m_{j=1}\delta(x_{ij},z_{lj})
+\end{equation}
+其中，
+\begin{equation*}
+  \delta(x_{ij},z_{lj})=\left\{
+  \begin{array}{cc}
+    1, & x_{ij}=z_{lj} \\
+    0 &  x_{ij}\neq z_{lj}
+  \end{array}
+  \right.
+\end{equation*}
+$x_{ij}$和$z_{lj}$ 是在第$j$个符号属性上的取值，$m$是属性的个数。
+
+在相似性度度量函数确定的基础上，对于如何判断当前初始聚类结果的优劣，我们还需要一定的判断标准，即聚类分析中的聚类准则函数。聚类准则函数是用来将所有对象有效的并且尽可能准确的划分到相应的子类当中的函数。其重要作用体现在聚类准则函数越好，聚类结果准确度越高。k-Modes聚类算法采用的是误差平方和方法，具体是使用以下目标函数最小作为聚类准则函数：
+\begin{equation}\label{equ:chapter3:kmodes:objfunc}
+\begin{split}
+   P(U,Z) =& \sum^k_{l=1}\sum^n_{i=1}u_{i,j}d(X_i,Z_l) \\
+      \text{Subject to} & \sum^k_{l=1}u_{i,l}=1,\quad 1\leqslant i \leqslant n\\
+      &u_{i,l}\in\{0,1\},\quad 1\leqslant i \leqslant n,1\leqslant l \leqslant k
+\end{split}
+\end{equation}
+在上式中，$U$是$n\times k$的隶属度矩阵；$n$表示对象集$\mathbf{X}$中所包含元素的个数，对应于隶属度矩阵中的行向量；$k$ 表示所划分子类的个数，对应于隶属度矩阵中的列向量；$u_{i,l}=1$ 表示对象$X_i$被分配到划分子类$C_l$中。$Z=\{Z_1,Z_2,\ldots,Z_k\}$ 是$k$个对象构成的非空有限集合，表示所划分子类的类中心,其中的元素$Z_l$可以表示为$Z_l=[z_{l,1},z_{l,2},\ldots,z_{l,m}](1\leqslant l \leqslant k)$。$d(X_i,Z_l)$ 表示对象$X_i$, 与类中心$Z_l$ 的新的相异度量函数。
+
+k-Modes的最优化问题可以分下面两个最小化问题迭代完成：
+\begin{enumerate}[1)]
+  \item 问题$P_1$：固定$Z=\widetilde{Z}$，$P(U,\widetilde{Z})$为最小值，当且仅当
+      \begin{equation*}
+        u_{i,l}=\left\{
+        \begin{array}{cl}
+          1 & if\; d(X_i,Z_l)\leqslant d(X_i,Z_h),\forall h,1\leqslant h \leqslant k\\
+          0 & otherwise
+        \end{array}
+        \right.
+      \end{equation*}
+  \item 问题$P_2$：固定$U=\widetilde{U}$，$P(\widetilde{U},Z)$为最小值，当且仅当
+      \begin{equation*}
+        z_{l,j}=a^{(r)}_j,\;
+      \text{satisfies}\;\argmax_{r,1\leqslant i \leqslant n}\bigg|\{u_{i,l}|x_{i,j}=a^{(r)}_j,u_{i,l}=1\}\bigg|
+      \end{equation*}
+      其中，$a^{(r)}_j$是子类$C_l$在属性$A_j$下的mode。
+\end{enumerate}
+
+k-Modes聚类算法的基本流程如算法~\ref{alg:chapter3:kmodes}所示。
+
+\begin{algorithm}[H]
+\caption{k-Modes算法流程}
+\begin{algorithmic}[1]\label{alg:chapter3:kmodes}
+\REQUIRE 数据集$X=\{X_1,X_2,\ldots,X_n\}$和聚类个数$k$
+\ENSURE 聚类划分结果$C=\{C_1,C_2,\ldots,C_k\}$
+\STATE 随机选择或指定$k$个对象作为类中心的初始值$Z^{(1)}=\{Z^{(1)}_1,Z^{(1)}_2,\ldots,Z^{(1)}_k\}$
+\STATE 计算每一个数据点到这个类中心之间的相异度$d(X_i,Z_l)$，并通过所得的相异度值来计算隶属度矩阵$U^{(1)}$，令$t=1$。
+\STATE 使用更新聚类中心的方法确定$Z^{(t+1)}$ 使得$P(U^{(t)},Z^{(t+1)})$最小，如果$P(U^{(t),Z^{(t+1)}})=P(U^{(t)},Z^{(t)})$，算法结束。
+\STATE 使用更新隶属度矩阵的方法确定$U^{(t+1)}$使得$P(U^{(t+1)},Z^{(t+1)})$最小，如果$P(U^{(t+1)},Z^{(t+1)})=P(U^{(t)},Z^{(t)})$，算法结束。否则，令$t=t+1$，然后转向Step3。
+\end{algorithmic}
+\end{algorithm}
+
+
+
+\subsection{组合不同的聚类结果}
+\subsubsection{聚类成员权重}
+我们认为，得到的不同聚类成员的重要程度是不同的，它们在最终的聚类结果所起的作用也是不同的，因此我们要给每个聚类成员加一个权重，通过权重再来投票得出最终的聚类结果。我们有监督和无监督两个方面考虑：
+\begin{enumerate}[1)]
+  \item 有监督数据：我们定义了一个一致率评价度量，也就是单单有监督这部分数据的聚类结果和这部分的类标一致的个数占总数的比例。
+      \begin{defn}
+      假设给定数据集$X= X^L\bigcup X^U$，$X^L$为有类标数据，$X^U$为无类标数据。某聚类成员$\pi_h$ 的有监督部分的权重可以表示为
+      \begin{equation}\label{equ:chapter3:weight:semi}
+        \omega^L_h=\frac{\sum_{x_i\in X^L}\sum_{x_j\in X^L}Cons(x_i,x_j)}{|X^L|\cdot |X^L|\cdot Z^L}
+      \end{equation}
+      其中$|\centerdot|$表示集合的个数，$Z^L$ 是归一化因子，使得$\omega^L_h>0$并且$\sum\omega^L_h=1$，$Cons$为两个对象的聚类结果与类标的一致度量，表示为：
+      \begin{equation}\label{equ:chapter3:weight:semi:cons}
+        Cons(x_i,x_j)\left\{
+        \begin{array}{cc}
+          0 & \pi_h(i)= \pi_h(j) \oplus d(i)= d(j)\\
+          1 & otherwise
+        \end{array}
+        \right.
+      \end{equation}
+      $\pi_h(i)= \pi_h(j)$代表$x_i$和$x_j$ 在同一个聚类结果里，$d(i)= d(j)$代表类标相同，$\oplus$ 为异或符号，该式子表示聚类结果和类标不一致结果为0，一致结果为1。
+      \end{defn}
+      对于有类标数据，我们认为聚类结果越和类标一致，就说明这个聚类成员的聚类效果越好，就应该给它赋更大的权值。
+  \item 无监督数据（全体数据）：这部分我们用公式~\ref{equ:chapter3:nmi}$NMI$来度量某一个聚类成员与其他的聚类成员的相似性。因为$X^L$去掉类标也是无监督信息，因此计算时我们考虑的是全体数据集$X$。
+      \begin{defn}
+      假设聚类成员的个数为$t$，某聚类成员$\pi_h$的无监督部分的权重可以表示为：
+      \begin{equation}\label{equ:chapter3:weight:unsupervised}
+        \omega^U_h=\frac{\sum^{t}_{l=1,l\neq h}\Phi^{NMI}(\pi_h,\pi_l)}{(1-t)\cdot Z^U}
+      \end{equation}
+      $\Phi^{NMI}(\pi_h,\pi_l)$为聚类成员$\pi_h$和$\pi_l$归一化互信息，$Z^U$是归一化因子，使得$\omega^U_h>0$并且$\sum\omega^U_h=1$
+      \end{defn}
+\end{enumerate}
+通过上面有监督和无监督两个方面得到的权重综合起来，对于某个聚类成员，我们得到了其最终的权重。
+\begin{defn}
+假设数据集$X= X^L\bigcup X^U$，通过生成不同的聚类结果，得到$t$ 个聚类成员为$\\Pi=\{\pi_1,\pi_2,\ldots,\pi_t\}$，其中任意一个聚类成员$\pi_h$的权重定义为：
+\begin{equation}\label{equ:chapter3:weight}
+  \omega_h=\frac{\alpha\omega^L_h+(1-\alpha)\omega^U_h}{2}
+\end{equation}
+这里的$\alpha$控制有监督信息与无监督信息在最终聚类结果里起作用的比例。
+\end{defn}
+\subsubsection{对齐步骤}
+
+基于投票的聚类集成算法在结合之前都要有对齐这一步骤\cite{Zhou2006}。这是因为两个不同的聚类成员可能分配给同一集簇不同的标号，例如，有两个聚类成员，它们对应的标签向量分别为$[1,2,2,1,1,3,3]^T$和$[2,3,3,2,2,1,1]^T$，尽管每一维度上对应的标签不同，但实际上这两个聚类成员的结果是一样的，因此要首先进行对齐操作。
+
+
+
+\begin{algorithm}[H]
+\caption{聚类成员$\pi^b$对齐成员$\pi^a$的算法}
+\begin{algorithmic}[1]\label{alg:chapter3:align}
+\REQUIRE 两个聚类成员$\pi^a=\{C^a_1,C^a_2,\ldots,C^a_k\}$和$\pi^b=\{C^b_1,C^b_2,\ldots,C^b_k\}$。
+\ENSURE 新的聚类标签$\pi^{b*}$
+\FOR {i=1 to k, j=1 to k}
+\STATE OVERLAP$_{ij}$=Count($C^a_i$,$C^a_j$)\\
+//OVERLAP是一个$k\times k$的矩阵，Count($A$,$B$) 计算集合$A$和$B$相交部分元素的个数
+\ENDFOR
+\STATE  $\pi^{b*}=\varnothing$
+\WHILE{ $\pi^{b*}\neq\{C^b_1,C^b_2,\ldots,C^b_k\}$ }
+\STATE (u,v)=$\argmax$(OVERLAP$_{uv}$))
+\STATE Match($C^a_u$,$C^b_v$) //将$C^a_u$和$C^b_v$匹配，即标签改为相同
+\STATE $\pi^{b*}=\pi^{b*} \cup \{C^b_v\}$ 并删除 OVERLAP$_{u*}$ 和OVERLAP$_{*v}$
+\ENDWHILE
+\end{algorithmic}
+\end{algorithm}
+
+聚类成员的对齐是基于两个相似的集簇含有相似的对象。例如有一个聚类集体中含有两个聚类成员$\pi_a$和$\pi_b$将数据集划分成$k$类，分别表示为$\{C^a_1,C^a_2,\ldots,C^a_k\}$和$\{C^b_1,C^b_2,\ldots,C^b_k\}$。对聚类成员中的每一对不同的集簇$C^a_i$和$C^b_j$中重叠的对象计数，换句话说对同时出现在$C^a_i$和$C^b_j$ 中的对象计数，然后选择个数最多的集簇对设置为匹配并将它们的标签改为相同，重复直到所有集簇都匹配完毕，如算法~\ref{alg:chapter3:align}。
+
+
+
+当聚类集成个数$t$，也就是聚类集体中聚类成员的个数大于2时，必须要选出一个聚类成员作为基准，其他聚类成员需要向它对齐。需要指出的是在文献\cite{Zhou2006}中，基准聚类成员是随机选择的，但是我们通过实验发现，选择权重公式~\ref{equ:chapter3:weight}最大值的聚类成员作为基准，具有更好的效果，因此，本文基准聚类成员的选择可以表示为：
+\begin{equation}\label{equ:chapter3:baseline}
+  \pi^{base}=\argmax_{h}(\omega_h)
+\end{equation}
+
+
+\subsubsection{投票策略}
+受到文献\cite{Zhou2006}启发，我们也提出四种投票策略，假设数据集为$X$聚类集成的个数为$t$：
+\begin{enumerate}[1)]
+  \item W\_Voting:将数据集$X$分别送到$t$个聚类器中，得到聚类成员$\pi^i$和对应的权重$\omega_i$，所有聚类器对每个对象作带权重的投票得到最终的聚类结果。
+  \item S\_W\_Voting:将数据集$X$分别送到$t$ 个聚类器中，得到聚类成员$\pi^i$和对应的权重$\omega_i$，权重$\omega_i\geqslant\lambda$的聚类器对每个对象作带权重的投票得到最终的聚类结果。这里的$\lambda$是一个阈值，仿照文献\cite{Zhou2006}，我们也将其设置为$1/t$。
+  \item Random\_W\_Voting:对于每个聚类器在数据集$X$随机选择属性，组成新的数据集$X'_i$，然后进行聚类，得到聚类成员$\pi^i$和对应的权重$\omega_i$，所有聚类器对每个对象作带权重的投票得到最终的聚类结果。
+  \item Random\_S\_W\_Voting:对于每个聚类器在数据集$X$随机选择属性，组成新的数据集$X'_i$，然后进行聚类，得到聚类成员$\pi^i$ 和对应的权重$\omega_i$，权重$\omega_i\geqslant\lambda$的聚类器对每个对象作带权重的投票得到最终的聚类结果。
+\end{enumerate}
+
+整个算法流程如算法~\ref{alg:chapter3:semiclusterensemble}所示。先通过多个k-Modes聚类器得到多个聚类成员(聚类结果)，组成一个聚类集体，然后分别计算有标签部分权值和无标签部分权值，最后通过投票策略得到最终的聚类结果。
+
+\begin{algorithm}[H]\label{alg:chapter3:semiclusterensemble}
+\caption{基于权值投票的半监督聚类集成}
+\begin{algorithmic}[1]\label{alg:chapter3:semiclusterensemble}
+\REQUIRE 数据集$X=\{X_1,X_2,\ldots,X_n\}$，权值比例系数$\alpha$，聚类集成个数$t$ 和聚类个数$k$
+\ENSURE 最终的聚类结果$\pi^*$
+\FOR {i=1 to t}
+\STATE $\pi^i$=k-Modes(X)，$\omega_i$=Weight(X)\\
+//k-Modes可以换成其他聚类算法，这里我们用生成初始点不同得到$t$ 个不同的聚类成员；Weight函数是利用公式~\ref{equ:chapter3:weight}计算得到权重
+\ENDFOR
+\STATE 利用公式~\ref{equ:chapter3:baseline}选出基准聚类成员；
+\STATE 利用算法~\ref{alg:chapter3:align}将其余聚类成员与基准聚类成员标签对齐；
+\STATE 根据某种投票策略，通过聚类成员和对应的权重，得到最终的聚类结果$\pi^*$。
+\end{algorithmic}
+\end{algorithm}
+
+\section{实验与分析}
+\subsection{数据集}
+\input{./Chapters/Part1/chapter3_datainfo}
+\subsection{评价方法}
+本文主要采用两种评价方法，准确率Accuracy(ACC)和归一化互信息Normalized Mutual Information(NMI)来评级聚类效果\cite{Xu2003}。
+\begin{defn}
+对一个对象$x_i$，假设$r_i$和$s_i$分别是聚类结果标签和真实的类标，准确率ACC则可以定义为
+\begin{equation}\label{equ:chapter3:acc}
+  ACC=\frac{\sum^n_i\delta(s_i,map(r_i))}{n}
+\end{equation}
+其中，$n$是数据集对象的个数，$\delta(x,y)$的值为1，如果$x=y$，反之亦然。与公式~\ref{equ:chapter3:kmodes:dis}相同。$map(r_i)$ 是一个映射函数，最佳映射方法采用的是Kuhn-Munkres算法\cite{Lovasz2009}。
+\end{defn}
+
+\begin{defn}
+假设$C$表示数据集真实的划分，$C'$是通过聚类算法得到的聚类结果，则它们的mutual information(MI)定义为：
+\begin{equation}\label{equ:chapter3:mi}
+  MI(C,C')=\sum_{c_i\in C,c'_j\in C'}p(c_i,c'_j)\log_{2}\frac{p(c_i,c'_j)}{p(c_i)\cdot p(c'_j)}
+\end{equation}
+其中，$p(c_i)$和$p(c'_j)$分别表示一个对象分别被$c_i$和$c'_j$选中的概率，$p(c_i,c'_j)$表示一个对象同时被$c_i$和$c'_j$选中的概率，$C$和$C'$的归一化互信息可以表示为：
+\begin{equation}\label{equ:chapter3:nmi}
+ NMI(C,C')=\frac{MI(C,C')}{max(H(C),H(C'))}
+\end{equation}
+式子中，$H(C)$和$H(C')$分别表示$C$和$C'$的熵。不难发现$NMI\in[0,1]$。如果$NMI=1$，说明两个划分完全相同；相反，如果$NMI=0$，说明两个划分完全独立。
+\end{defn}
+\subsection{结果及分析}
+\input{./Chapters/Part1/chapter3_figs}
+\input{./Chapters/Part1/chapter3_tabs}
+
+
+\section{小结}
+本章提出了一种基于聚类集成思想的半监督聚类方法，该方法适用于符号属性数据聚类。首先有用符号数据聚类算法k-Modes得到多个聚类成员组成一个聚类集体，因为k-Modes对初始点敏感，我们每次选取不同的初始点，这样就可以保证聚类成员的多样性。结合无监督信息和半监督信息，我们定义了无监督部分的权值和有监督部分的权值，以及组合这两部分权值的方式。最后又提出了四种投票策略，并采用权值投票得到最终的投票结果。在本章的最后，我们通过UCI数据集，对单个k-Modes算法进行了比较，并且也相互之间比较了四种投票策略。实验结果，在大多数的情况下，我们提出的方法明显优于单独k-Modes的效果，而四种投票策略则是针对不同的数据集有好有坏。
+
+
+%##############NMI##########
+\begin{table}[!htp]
+\centering\caption{比较NMI:参数为Alpha=0.60 Ensize=15 Lpercent=0.15}
+\label{tab:chapter3:dataevaluate:nmi}
+ \resizebox{\textwidth}{!}{ %
+\begin{tabular}{lccccccccc}
+\toprule
+\multirow{3}{*}{\centering $Datasets$}
+&\multicolumn{2}{c}{$w\_voting$}
+&\multicolumn{2}{c}{$s\_w\_voting$}
+&\multicolumn{2}{c}{$random\_w\_voting$}
+&\multicolumn{2}{c}{$random\_s\_w\_voting$}
+&\multicolumn{1}{c}{$single\_kmodes$}\\
+\cmidrule{2-10}
+&NMI$\pm$Std&$\rho$-Value&NMI$\pm$Std&$\rho$-Value&NMI$\pm$Std&$\rho$-Value&NMI$\pm$Std&$\rho$-Value&NMI$\pm$Std\\
+\midrule
+Audiology & 0.44$\pm$0.05 & 0.02\Large$\mathbf{\times}$ & 0.45$\pm$0.04 & 0.07\Large- & 0.48$\pm$0.04 & 0.93\Large- & 0.49$\pm$0.06 & 0.71\Large- & 0.48$\pm$0.01\\
+Balloons & 0.45$\pm$0.11 & 0.00\Large\textcolor{red}{\checkmark} & 0.48$\pm$0.08 & 0.00\Large\textcolor{red}{\checkmark} & 0.12$\pm$0.31 & 0.77\Large- & 0.16$\pm$0.32 & 0.97\Large- & 0.16$\pm$0.16\\
+BreastCancer & 0.00$\pm$0.00 & 0.52\Large- & 0.00$\pm$0.00 & 0.54\Large- & 0.01$\pm$0.02 & 0.38\Large- & 0.01$\pm$0.03 & 0.35\Large- & 0.00$\pm$0.01\\
+CarEvaluation & 0.04$\pm$0.02 & 0.87\Large- & 0.03$\pm$0.02 & 0.41\Large- & 0.13$\pm$0.04 & 0.00\Large\textcolor{red}{\checkmark} & 0.14$\pm$0.05 & 0.00\Large\textcolor{red}{\checkmark} & 0.04$\pm$0.03\\
+Chess & 0.02$\pm$0.01 & 0.03\Large\textcolor{red}{\checkmark} & 0.02$\pm$0.01 & 0.01\Large\textcolor{red}{\checkmark} & 0.00$\pm$0.00 & 0.11\Large- & 0.00$\pm$0.01 & 0.70\Large- & 0.01$\pm$0.01\\
+Hayes & 0.01$\pm$0.01 & 0.25\Large- & 0.01$\pm$0.01 & 0.21\Large- & 0.03$\pm$0.03 & 0.02\Large\textcolor{red}{\checkmark} & 0.03$\pm$0.01 & 0.00\Large\textcolor{red}{\checkmark} & 0.01$\pm$0.00\\
+Lenses & 0.25$\pm$0.13 & 0.56\Large- & 0.25$\pm$0.13 & 0.57\Large- & 0.34$\pm$0.13 & 0.02\Large\textcolor{red}{\checkmark} & 0.36$\pm$0.17 & 0.01\Large\textcolor{red}{\checkmark} & 0.22$\pm$0.11\\
+Lympho & 0.12$\pm$0.02 & 0.60\Large- & 0.14$\pm$0.04 & 0.12\Large- & 0.11$\pm$0.03 & 0.88\Large- & 0.13$\pm$0.03 & 0.39\Large- & 0.11$\pm$0.04\\
+Monks & 0.04$\pm$0.03 & 0.09\Large- & 0.03$\pm$0.02 & 0.06\Large- & 0.01$\pm$0.01 & 0.04\Large$\mathbf{\times}$ & 0.01$\pm$0.01 & 0.32\Large- & 0.02$\pm$0.02\\
+Mushroom & 0.54$\pm$0.07 & 0.05\Large- & 0.56$\pm$0.02 & 0.02\Large\textcolor{red}{\checkmark} & 0.40$\pm$0.16 & 0.46\Large- & 0.36$\pm$0.16 & 0.87\Large- & 0.35$\pm$0.25\\
+Nursery & 0.03$\pm$0.02 & 0.05\Large$\mathbf{\times}$ & 0.04$\pm$0.02 & 0.10\Large- & 0.20$\pm$0.18 & 0.03\Large\textcolor{red}{\checkmark} & 0.25$\pm$0.14 & 0.00\Large\textcolor{red}{\checkmark} & 0.05$\pm$0.02\\
+Promoters & 0.05$\pm$0.07 & 0.52\Large- & 0.08$\pm$0.09 & 0.26\Large- & 0.08$\pm$0.06 & 0.18\Large- & 0.07$\pm$0.07 & 0.32\Large- & 0.03$\pm$0.06\\
+Shuttle & 0.04$\pm$0.01 & 0.26\Large- & 0.04$\pm$0.00 & 0.22\Large- & 0.06$\pm$0.03 & 0.07\Large- & 0.06$\pm$0.04 & 0.06\Large- & 0.03$\pm$0.02\\
+Soybean & 0.08$\pm$0.01 & 0.42\Large- & 0.08$\pm$0.01 & 0.82\Large- & 0.07$\pm$0.02 & 0.20\Large- & 0.07$\pm$0.03 & 0.19\Large- & 0.09$\pm$0.02\\
+SPECT & 0.03$\pm$0.01 & 0.74\Large- & 0.03$\pm$0.01 & 0.85\Large- & 0.06$\pm$0.03 & 0.02\Large\textcolor{red}{\checkmark} & 0.08$\pm$0.04 & 0.01\Large\textcolor{red}{\checkmark} & 0.04$\pm$0.03\\
+Trains & 0.13$\pm$0.14 & 0.66\Large- & 0.20$\pm$0.16 & 0.26\Large- & 0.11$\pm$0.10 & 0.79\Large- & 0.12$\pm$0.12 & 0.76\Large- & 0.10$\pm$0.12\\
+Tumor & 0.34$\pm$0.01 & 0.48\Large- & 0.34$\pm$0.01 & 0.49\Large- & 0.30$\pm$0.03 & 0.00\Large$\mathbf{\times}$ & 0.31$\pm$0.03 & 0.00\Large$\mathbf{\times}$ & 0.34$\pm$0.02\\
+Voting & 0.44$\pm$0.01 & 0.55\Large- & 0.45$\pm$0.02 & 0.88\Large- & 0.46$\pm$0.03 & 0.11\Large- & 0.47$\pm$0.03 & 0.03\Large\textcolor{red}{\checkmark} & 0.45$\pm$0.02\\
+\midrule
+Average&\multicolumn{2}{c}{ 0.17 } &\multicolumn{2}{c}{ 0.18 } &\multicolumn{2}{c}{ 0.16 } &\multicolumn{2}{c}{ 0.17 } &\multicolumn{1}{c}{ 0.14 } \\
+\midrule
+Win/Tie/Lose&\multicolumn{2}{c}{ 2/14/2 } &\multicolumn{2}{c}{ 3/15/0 } &\multicolumn{2}{c}{ 5/11/2 } &\multicolumn{2}{c}{ 6/11/1 } &\multicolumn{1}{c}{}\\
+\bottomrule
+\end{tabular}
+}%
+\end{table}
+}

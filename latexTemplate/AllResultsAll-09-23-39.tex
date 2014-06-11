@@ -1,0 +1,254 @@
+\documentclass[final,5p,times]{elsarticle}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{amssymb}
+\usepackage{pifont}
+\usepackage{xcolor}
+\usepackage{wasysym}
+\usepackage{booktabs}
+\begin{document}
+
+\begin{table*}[htbp]
+\centering
+%\small
+\caption{Summary of the experiment datasets}
+\label{tab:reduction:datasetinfo}
+%\resizebox{0.5\textwidth}{!}{
+	\begin{tabular}{llllll}
+	\toprule
+	\multirow{3}{*}{\centering $Dataset$} &
+ 	\multirow{3}{*}{\centering $Objects$} &
+ 	\multicolumn{3}{c}{$Features$} & 
+	\multirow{3}{*}{\centering $Classes$}\\
+	\cmidrule{3-5}
+	&&$Total$&$Nominal$&$Numeric$\\
+	\midrule
+	Labor	&	57	&	16	&	8	&	8	&	2	\\
+	Labor	&	57	&	16	&	8	&	8	&	2	\\
+	\bottomrule
+	\end{tabular}
+%}
+\end{table*}
+\begin{table*}[htbp]
+\centering
+%\small
+%\resizebox
+\caption{Size of feature selection and using time}
+\label{tab:reduction:sizetime}
+	\begin{tabular}{lcrcrcrcrc}
+	\toprule
+	\multirow{3}{*}{\centering $Dataset$}&
+	\multicolumn{2}{c}{$MCE$} &
+	\multicolumn{2}{c}{$ECE$} &
+	\multicolumn{2}{c}{$ARP^1$} &
+	\multicolumn{2}{c}{$ARP^2$} &
+	\multicolumn{1}{c}{$FullFeatures$}\\
+	\cmidrule{2-10}&
+	Size&Time&
+	Size&Time&
+	Size&Time&
+	Size&Time&
+	Size\\
+	\midrule
+	Labor	&	10	&	0.04	&	16	&	0.04	&	11	&	0.03	&	11	&	0.03	&	16\\
+	Labor	&	10	&	0.03	&	16	&	0.04	&	11	&	0.02	&	11	&	0.03	&	16\\
+	\midrule
+	Average	&	10.0	&	10.0	&	16.0	&	16.0	&	11.0	&	11.0	&	11.0	&	11.0	&	16.0\\
+	\bottomrule
+	\end{tabular}
+\end{table*}
+\begin{table*}[htbp]
+\centering
+%\small
+\caption{Accuracy of  algorithms with NaiveBayes classifiers}
+\label{tab:reduction:acwithpval:naivebayes}
+%\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lcccccccc}
+	\toprule
+	\multirow{3}{*}{\centering $Datasets$}
+&	\multicolumn{1}{c}{$MCE$}
+&	\multicolumn{2}{c}{$ECE$}
+&	\multicolumn{2}{c}{$ARP^1$}
+&	\multicolumn{2}{c}{$ARP^2$}
+&	\multicolumn{2}{c}{$FullAttributes$}
+	\\\cmidrule{2-10}
+	&Acc$\pm$Std	&Acc$\pm$Std&$\rho$-Value	&Acc$\pm$Std&$\rho$-Value	&Acc$\pm$Std&$\rho$-Value	&Acc$\pm$Std&$\rho$-Value	\\\midrule	\bottomrule
+	\end{tabular}
+%}%
+\end{table*}
+
+
+
+\begin{table*}[htbp]
+\centering
+%\small
+\caption{Accuracy of  algorithms with RBF-SVM classifiers}
+\label{tab:reduction:acwithpval:rbf-svm}
+%\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lcccccccc}
+	\toprule
+	\multirow{3}{*}{\centering $Datasets$}
+&	\multicolumn{1}{c}{$MCE$}
+&	\multicolumn{2}{c}{$ECE$}
+&	\multicolumn{2}{c}{$ARP^1$}
+&	\multicolumn{2}{c}{$ARP^2$}
+&	\multicolumn{2}{c}{$FullAttributes$}
+	\\\cmidrule{2-10}
+	&Acc$\pm$Std	&Acc$\pm$Std&$\rho$-Value	&Acc$\pm$Std&$\rho$-Value	&Acc$\pm$Std&$\rho$-Value	&Acc$\pm$Std&$\rho$-Value	\\\midrule	\bottomrule
+	\end{tabular}
+%}%
+\end{table*}
+
+
+
+\begin{table*}[htbp]
+\centering
+%\small
+\caption{Accuracy of  algorithms with J48 classifiers}
+\label{tab:reduction:acwithpval:j48}
+%\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lcccccccc}
+	\toprule
+	\multirow{3}{*}{\centering $Datasets$}
+&	\multicolumn{1}{c}{$MCE$}
+&	\multicolumn{2}{c}{$ECE$}
+&	\multicolumn{2}{c}{$ARP^1$}
+&	\multicolumn{2}{c}{$ARP^2$}
+&	\multicolumn{2}{c}{$FullAttributes$}
+	\\\cmidrule{2-10}
+	&Acc$\pm$Std	&Acc$\pm$Std&$\rho$-Value	&Acc$\pm$Std&$\rho$-Value	&Acc$\pm$Std&$\rho$-Value	&Acc$\pm$Std&$\rho$-Value	\\\midrule	\bottomrule
+	\end{tabular}
+%}%
+\end{table*}
+
+
+
+\begin{table*}[htbp]
+\centering
+%\small
+\caption{Accuracy of  algorithms with SimpleCart classifiers}
+\label{tab:reduction:acwithpval:simplecart}
+%\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lcccccccc}
+	\toprule
+	\multirow{3}{*}{\centering $Datasets$}
+&	\multicolumn{1}{c}{$MCE$}
+&	\multicolumn{2}{c}{$ECE$}
+&	\multicolumn{2}{c}{$ARP^1$}
+&	\multicolumn{2}{c}{$ARP^2$}
+&	\multicolumn{2}{c}{$FullAttributes$}
+	\\\cmidrule{2-10}
+	&Acc$\pm$Std	&Acc$\pm$Std&$\rho$-Value	&Acc$\pm$Std&$\rho$-Value	&Acc$\pm$Std&$\rho$-Value	&Acc$\pm$Std&$\rho$-Value	\\\midrule	\bottomrule
+	\end{tabular}
+%}%
+\end{table*}
+
+
+
+\begin{table*}[htbp]
+\centering
+%\small
+\caption{Accuracy of  algorithms with NaiveBayes classifiers}
+\label{tab:reduction:accresults:naivebayes}
+%\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lccccc}
+	\toprule
+	$DataSet$ &
+	$MCE$ &
+	$ECE$ &
+	$ARP^1$ &
+	$ARP^2$ &
+	$FullAttributes$ \\
+	\midrule
+	Labor	&	90.53$\pm$1.89	&	94.04$\pm$2.06	&	92.11$\pm$2.77	&	90.18$\pm$2.22	&	94.04	\\
+	Labor	&	90.53$\pm$1.89	&	94.04$\pm$2.06	&	92.11$\pm$2.77	&	90.18$\pm$2.22	&	94.04	\\
+	\midrule
+	Average	&	90.53	&	94.04	&	92.11	&	90.18	&	94.04	\\
+	\bottomrule
+	\end{tabular}
+%}%
+\end{table*}
+
+
+
+\begin{table*}[htbp]
+\centering
+%\small
+\caption{Accuracy of  algorithms with RBF-SVM classifiers}
+\label{tab:reduction:accresults:rbf-svm}
+%\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lccccc}
+	\toprule
+	$DataSet$ &
+	$MCE$ &
+	$ECE$ &
+	$ARP^1$ &
+	$ARP^2$ &
+	$FullAttributes$ \\
+	\midrule
+	Labor	&	91.75$\pm$1.44	&	94.21$\pm$0.85	&	93.33$\pm$2.16	&	92.28$\pm$1.23	&	94.21	\\
+	Labor	&	91.75$\pm$1.44	&	94.21$\pm$0.85	&	93.33$\pm$2.16	&	92.28$\pm$1.23	&	94.21	\\
+	\midrule
+	Average	&	91.75	&	94.21	&	93.33	&	92.28	&	94.21	\\
+	\bottomrule
+	\end{tabular}
+%}%
+\end{table*}
+
+
+
+\begin{table*}[htbp]
+\centering
+%\small
+\caption{Accuracy of  algorithms with J48 classifiers}
+\label{tab:reduction:accresults:j48}
+%\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lccccc}
+	\toprule
+	$DataSet$ &
+	$MCE$ &
+	$ECE$ &
+	$ARP^1$ &
+	$ARP^2$ &
+	$FullAttributes$ \\
+	\midrule
+	Labor	&	79.12$\pm$3.83	&	78.42$\pm$2.99	&	79.65$\pm$3.9	&	79.65$\pm$3.72	&	78.42	\\
+	Labor	&	79.12$\pm$3.83	&	78.42$\pm$2.99	&	79.65$\pm$3.9	&	79.65$\pm$3.72	&	78.42	\\
+	\midrule
+	Average	&	79.12	&	78.42	&	79.65	&	79.65	&	78.42	\\
+	\bottomrule
+	\end{tabular}
+%}%
+\end{table*}
+
+
+
+\begin{table*}[htbp]
+\centering
+%\small
+\caption{Accuracy of  algorithms with SimpleCart classifiers}
+\label{tab:reduction:accresults:simplecart}
+%\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lccccc}
+	\toprule
+	$DataSet$ &
+	$MCE$ &
+	$ECE$ &
+	$ARP^1$ &
+	$ARP^2$ &
+	$FullAttributes$ \\
+	\midrule
+	Labor	&	81.75$\pm$3.98	&	80.35$\pm$2.59	&	81.05$\pm$3.68	&	81.75$\pm$3.53	&	80.35	\\
+	Labor	&	81.75$\pm$3.98	&	80.35$\pm$2.59	&	81.05$\pm$3.68	&	81.75$\pm$3.53	&	80.35	\\
+	\midrule
+	Average	&	81.75	&	80.35	&	81.05	&	81.75	&	80.35	\\
+	\bottomrule
+	\end{tabular}
+%}%
+\end{table*}
+
+
+
+
+
+\end{document} 

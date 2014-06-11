@@ -1,0 +1,165 @@
+\chapter{基于耦合依赖度的半监督属性选择}
+\label{chapter:daulpos}
+近年来，粗糙集理论（Rough Set Theory）\cite{Pawlak1991,Pawlak1995,Pawlak1995a,Pawlak1998,Pawlak1999,Pawlak2007}已经成为一种能够有效的处理复杂系统中信息和数据，它是一种处理不确定和不精确问题的新型的数学工具。粗糙集理论中的属性选择（属性约简）算法是粗糙集理论的核心内容之一。在粗糙集理论中，一个属性集的约简或者相对约简并不唯一，而求属性集的全部约简或者最小约简是一个NP-hard的问题，因此我们常常使用启发式的约简算法来获取属性约简，这里说的一个属性约简也就是属性选择。通过定义属性的一个重要度函数或差别函数，依照此函数在启发式算法的框架下来获取信息系统或者决策系统的属性选择。但是传统的重要度函数都是基于决策属性也就是类标来度量，在半监督属性约简中，还有相当部分数据不带类标，在这种情况下，粗糙集属性选择方法效果就会下降。本章拓展了传统的依赖度，不仅可以度量对决策属性（类别）的相关程度，而且可以度量属性之间的冗余程度。
+
+\section{粗糙集概述}
+在粗糙集理论中，Pawlak使用知识表达系统，主要有两种类型：一类是信息系统（信息表）；一类是决策系统（决策表）。知识表达系统被看成是一个关系数据表，关系表的行对应要研究的对象，关系表的列对应对象的属性，对象信息通过指定对象的各属性值来表达。定义~\ref{def:chapter6:roughset:infosys}给出了它的形式化定义\cite{XuQing2012}。
+\begin{defn}\label{def:chapter6:roughset:infosys}
+一个信息系统 （信息表） 可被定义为一个四元组$IS=<U,A,V,f>$，其中，
+\begin{description}
+  \item[] $U$：表示对象的非空有限集合，称为论域；
+  \item[] $A$：表示属性的非空集合；
+  \item[] $V$：表示全体属性的值域，$V=\bigcup_{a\in A}V_a$，$V_a$表示属性$a\in A$的值域；
+  \item[] $f$：表示$U\times A\rightarrow V$的一个映射，称为信息函数。$\forall x\in U$，$a\in A$，$f(a,x)\in V_a$表示对象$x$ 在属性$a$上的一个取值。
+\end{description}
+\end{defn}
+
+\begin{defn}\label{def:chapter6:roughset:decsys}
+一个决策系统（决策表）可被定义为一个四元组$DS=<U,A\cup D,V,f>$，其中，
+\begin{description}
+  \item[] $U$：表示对象的非空有限集合，称为论域；
+  \item[] $A$：表示条件属性的非空集合；$D$表示决策属性的非空集合，$C\cap D=\varnothing$；
+  \item[] $V$：表示全体条件属性和决策属性的值域，$V=\{V_a|a\in A\}\cup\{V_d|d\in D\}$；
+  \item[] $f$：表示$U\times A\rightarrow V$的一个映射，称为信息函数.$\forall x\in U$，$a\in A\cup D$，$f(a,x)\in V_a$表示对象$x$在属性$a$上的一个取值。
+\end{description}
+\end{defn}
+
+这里的$U$实质上表示上文中过的数据集$X$，$D$代表数据集的类标。接下来我们介绍不可分辨关系，上近似、下近似、正域和依赖度。
+
+\begin{defn}\label{def:decsys}
+在知识表达系统$S=<U,A,V,f>$中，根据属性集合$B\subseteq A$，不可分分辨关系（即等价关系）定义为：
+\begin{equation}\label{equ:chapter6:roughset:ind}
+  IND(B)=\{(x,y)|\forall b\in B,f(b,x)=f(b,y)\}
+\end{equation}
+论域的等价关系构成了论域的划分，记为$U/IND(B)$(简记为$U/B$)。对象$x\in U$的等价类定义为:
+\begin{equation}\label{equ:chapter6:roughset:equivalentclass}
+  [x]_{IND(B)}=[x]_B=\{y|(x,y)\in IND(B)\}
+\end{equation}
+\end{defn}
+
+
+\begin{defn}\label{def:chapter6:roughset:app}
+假设给定一个知识表达系统$S=<U,A,V,f>$，$\forall X\subseteq U$和$B\subseteq A$，子集$X$关于$B$的下近似和上近似分别是
+\begin{equation}\label{equ:chapter6:roughset:lowapp}
+\begin{split}
+  \underline{B}(X)= & \{x|\forall x\in U,[x]_B\subseteq X\} \\
+   \overline{B}(X)= & \{x|\forall x\in U,[x]_B\cap X\neq \varnothing\}
+\end{split}
+\end{equation}
+集合$BN_{B}(X)=\overline{B}(X)-\underline{B}(X)$ 称为$X$关于$B$的边界域；$POS_B(X)=\underline{B}(X)$称为$X$关于$B$的正域。
+\end{defn}
+
+下近似$\underline{B}(X)$或正域$POS_B(X)$是由那些根据$IND(B)$肯定属于集合$X$的论域
+$U$中元素组成的集合；上近似$\overline{B}(X)$是由那些根据$IND(B)$肯定属于或者可能属
+于集合$X$的论域$U$中元素组成的集合；边界域$BN_{B}(X)$是由那些根据$IND(B)$既
+不能判定肯定属于$X$也不能判定肯定不属于$X$的论域$U$中元素组成的集合。
+
+\section{基于依赖度的属性约简算法}
+
+在决策系统中，基于条件属性对决策属性依赖度的属性约简算法是通过Pawlak属性重要度为启发函数，所以，我们首先定义决策表中的属性的依赖度和重要度。
+
+\begin{defn}\label{def:chapter6:roughset:dep}
+给定一个决策系统$DS=<U,A\cup D,V,f>$，$B\subseteq A$，定义
+\begin{equation}\label{equ:chapter6:roughset:dep}
+  \gamma_B(D)=\frac{POS_B(D)}{|U|}=\frac{\bigg|\bigcup_{X\in U/D}\underline{B}(X)\bigg|}{|U|}
+\end{equation}
+为$D$依赖于$P$的程度，记作$P\Rightarrow_k D$
+\end{defn}
+
+\begin{defn}\label{def:chapter6:roughset:sig}
+给定一个决策系统$DS=<U,A\cup D,V,f>$，$\forall B\subseteq A$，$\forall b\in B$，定义条件属性$b$ 对条件属性集$B$相对于决策属性$D$的重要度为：
+\begin{equation}\label{equ:chapter6:roughset:sig}
+  SIG(b,B,D)=\gamma_{B\cup\{b\}}(D)-\gamma_B(D)=\frac{|POS_{B\cup\{b\}}(D)|-|POS_B(D)|}{|U|}
+\end{equation}
+其中，$\gamma_B(D)$是定义~\ref{def:chapter6:roughset:dep}中的依赖度。
+\end{defn}
+
+定义了属性的重要度度量之后，基于Pawlak属性重要度的属性约简算法描
+述如下：
+
+\begin{algorithm}[H]
+\caption{基于Pawlak属性重要度的决策表属性约简算法}
+\begin{algorithmic}[1]\label{alg:chapter6:pawlakpos}
+\REQUIRE 决策系统$DS=<U,A\cup D,V,f>$
+\ENSURE 条件属性$A$相对于决策决策属性$D$的一个相对约简$B\in RED_D(A)$
+\STATE $B=\varnothing$
+\STATE $a_i=\argmax_{a_i\in A-B}SIG(a_i,B,D)$
+\STATE $B=B\cup \{a_i\}$
+\WHILE{$POS_B(D)\neq POS_A(D)$}
+\STATE $a_i=\argmax_{a_i\in A-B}SIG(a_i,B,D)$
+\STATE $B=B\cup \{a_i\}$
+\ENDWHILE
+\RETURN $B\in RED_D(A)$
+\end{algorithmic}
+\end{algorithm}
+
+
+\section{基于耦合依赖度的属性选择算法DaulPOS}
+
+\begin{defn}\label{def:chapter6:daulpos:dauldep}
+假设给定一个知识表达系统$S=<U,A,V,f>$，$a_i,a_j\subseteq A$，耦合依赖度定义：
+\begin{equation}\label{equ:chapter6:dauldep}
+  daulDep(a_i,a_j)=\frac{POS_{a_i}(a_j)+POS_{a_j}(a_i)}{2|U|}
+\end{equation}
+\end{defn}
+
+\begin{defn}\label{def:chapter6:daulpos:relred}
+假设给定一个决策系统$DS=<U,A\cup D,V,f>$，$a_i,a_j\subseteq A$，$D$为决策属性，则相关性定义为：
+\begin{equation}\label{equ:chapter6:rel}
+  Rel(a_i,d)=daulDep^L(a_i,d)
+\end{equation}
+属性间冗余性定义为：
+\begin{equation}\label{equ:chapter6:red}
+  Red(a_i,a_j)=daulDep(a_i,a_j)
+\end{equation}
+\end{defn}
+
+
+\begin{defn}\label{def:chapter6:daulpos:conrate}
+      假设给定数据集$X= X^L\bigcup X^U$，对于有类标数据$X^L$，可以定义某个属性$a_i$对决策属性的一致率为
+      \begin{equation}\label{equ:chapter3:weight:semi}
+        Con(a_i)=\frac{\sum_{x\in X^L}\sum_{y\in X^L}Cons_i(x,y)}{|X^L|\cdot |X^L|}
+      \end{equation}
+      $Cons$为两个对象的属性$a_i$与类标的一致度量，表示为：
+      \begin{equation}\label{equ:chapter6:cons}
+        Cons_i(x,y)\left\{
+        \begin{array}{cc}
+          0 & a_i(x)= a_i(y) \oplus d(i)= d(j)\\
+          1 & otherwise
+        \end{array}
+        \right.
+      \end{equation}
+      $a_i(x)= a_i(y)$代表$x$和$y$在属性$a_i$下取同一个值，$d(i)= d(j)$代表类标相同，$\oplus$ 为异或符号，该式子表示属性$a_i$和类标一致的程度。
+\end{defn}
+
+定义属性的相关性和属性的冗余性后，我们考虑属性选择的搜索策略，我们通过属性与类标的一致度量对属性进行排序，按照这个顺序，对于单个待考察的属性$a_i$，如果属性的相关性大于其对于已选属性中每个属性的冗余性，我们就将它加入的属性选择子集中，反之，就将它丢弃。知道遍历完所有的属性，算法停止。整个DaulPOS算法流程如算法~\ref{alg:chapter6:daulpos}所示。
+
+
+\begin{algorithm}[H]
+\caption{基于耦合依赖度的半监督属性选择算法DaulPOS}
+\begin{algorithmic}[1]\label{alg:chapter6:daulpos}
+\REQUIRE 数据集$X=X^U \cup X^L$，属性全集为$A$
+\ENSURE 特征选择$S$
+\STATE $S=\varnothing$，$Rest=A$
+\STATE $S = S\cup \argmax_{a_i\in A}Cons(a_i)$
+\STATE $Rest = Rest - S$
+\WHILE{$Rest\neq\varnothing$}
+\STATE $a_i = \argmax_{a_i\in Rest}Cons(a_i)$
+\IF {$Rel(a_i,d)>=Red(a_i,a_j)$，$\forall a_j\in S$}
+\STATE  $S = S\cup a_i$
+\ENDIF
+\STATE $Rest = Rest - a_i$
+\ENDWHILE
+\STATE 输出特征选择$S$
+\end{algorithmic}
+\end{algorithm}
+\section{实验与分析}
+\input{./Chapters/Part4/chapter6_figs}
+\input{./Chapters/Part4/chapter6_tabs}
+\input{./Chapters/Part4/chapter6_tabs_ex}
+\section{小结}
+在本章中，我们将粗糙集理论中传统的依赖度，拓展到了半监督领域，称作耦合依赖度。耦合依赖度不仅可以度量条件属性对决策属性的依赖程度，还能度量条件属性间的冗余程度。对于两种属性选择方法，我们提出了两种不同的搜索策略。我们做了两方面实验，与上一章相同，我们分别用了不同分类器和聚类算法验证我们的方法，结果表明在分类预测精度和聚类效果不降低的前提下，DaulPOS能有效降低数据集的维度。另一方面，我们将上文中提到半监督聚类方法与两种半监督属性选择方法结合，并从时间和聚类效果做了验证。
+
+
+
+

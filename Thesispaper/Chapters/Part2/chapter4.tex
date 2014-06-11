@@ -1,0 +1,196 @@
+\chapter{基于分裂重组合的半监督聚类算法}
+\label{chapter:splitmerge}
+
+本章节提出了一种基于分裂合并思想的符号数据半监督聚类算法。首先通过有监督和无监督信息将数据集的对象分裂成多于$k$个很小的簇，然后通过合并小簇成$k$ 个大簇，最终得到聚类结果。
+
+\section{分裂重组合的半监督聚类算法}
+\subsection{分裂策略}
+通过利用有监督和无监督信息，将对象分裂成多个小簇，换句话说，也就是得到一个划分。这里，我们引出等价关系的概念。
+\begin{defn}
+设$R$是某个集合$X$上的一个二元关系。若$R$满足以下条件：
+\begin{enumerate}[1)]
+  \item 自反性：$\forall a\in X$， $aRa$
+  \item 对称性：$\forall a,b\in X$，$aRb \Rightarrow bRa$
+  \item 传递性：$\forall a,b,c\in X$，$aRb \wedge bRa \Rightarrow aRc$
+\end{enumerate}
+则称$R$是一个定义在$X$上的等价关系。
+\end{defn}
+
+假设$\mathbf{X}=\mathbf{X}^L\bigcup\mathbf{X}^U=\{x_1,x_2,\ldots,x_n\}$ 表示一个属性个数为$m$的数据集。其中，$\mathbf{X}^L$代表有类标的数据集，对象$X^l_i\in \mathbf{X}^L$ 可以表示成为$X^l_i=[x_{i1},x_{i2},\ldots,x_{im},d_i]$，其中的$d_i$ 表示$X^l_i$的类标；$\mathbf{X}^U$ 代表无类标的数据集对象$X^u_i\in \mathbf{X}^U$ 可以表示成为$X^u_i=[x_{i1},x_{i2},\ldots,x_{im},-1]$。这里要指出的是，为了计算方便，无类标的数据我们将类标都赋值为$-1$。
+
+我们可以得到
+\begin{equation}\label{equ:chapter4:equivalentrelation}
+\begin{split}
+  R^U= & \{(x_i,x_j)\in X\times X|\forall m,x_{im}=x_{jm}\} \\
+   R^L= & \{(x_i,x_j)\in X\times X| d_i=d_j\}
+\end{split}
+\end{equation}
+不难证明，$R^U$和$R^L$都为等价关系，其中$R^U$利用无监督信息得到的等价关系，而$R^L$是利用有监督的信息得到的二元等价关系。我们有$R=R^U \cap R^L$也是一个二元等价关系。
+
+\begin{defn}
+假设在一个集合$X$上定义一个等价关系$R$，则$X$中的某个元素$x_i$ 的等价类就是在$X$ 中等价于$x_i$的所有元素所形成的子集：
+\begin{equation}\label{equ:chapter4:equivalent}
+  [x_i]_R=\{x_j\in X|x_iRx_j\}
+\end{equation}
+在$X$中的给定等价关系$R$的所有等价类的集合表示为$X/R$并叫做$X$ 除以$R$的商集，此时，$X/R$就是集合$X$在关系$R$下的划分。
+\end{defn}
+
+当给定一个数据$X$时，先通过利用无监督信息得到一个无监督的等价关系$R^U$，进而得到了一个划分$X/R^U$；再利用所给的有类标的数据得到了等价关系$R^L$，将第一步得到的划分进一步细化，得到一个既有有监督信息又有有监督信息的划分$X/(R^U \cap R^L)$。通过上述方法，我们将数据集$X$分成一个一个小簇，也就是一个个等价类，这些等价类有的只有无监督信息，有的既有无监督信息也有有监督信息。
+
+\subsection{合并策略}
+在得到了一个个小簇(等价类)后，我们接下来将这些小簇合并，合并有多种方法，本文采用的是基于层次聚类的半监督合并方法。
+
+层次聚类方法是根据给定的集簇距离度量策略，构造和维护一棵由簇和子簇形成的聚类树，直至满足某个终结条件为止。根据层次分解是自底向上还是自顶向下形成，层次聚类方法可以分为分裂方式(Divisive)和凝聚方式(Agglomerative)。
+%一个纯粹的层次聚类方法的聚类质量受限于如下特点:一旦一个合并或分裂被执行，就不能修正。
+
+\begin{enumerate}[1)]
+  \item 分裂方式:这种自顶向下的策略首先将所有对象设置在一个簇中，然后逐步细分为越来越小的簇，直到每个对象自成一簇，或者达到了某个终结条件，如达到了某个设定的集簇数目，或两个最近的集簇之间的距离超过了某个阈值。
+  \item 凝聚方式:这种自底向上的策略首先将每个对象作为一个簇，然后合并这些原子簇为越来越大的簇，直到所有的对象都在一个簇中，或者某个终结条件被满足。绝大多数层次聚类方法属于这一类，它们只是在集簇距离度量策略不同。
+\end{enumerate}
+
+%层次聚类算法的难点在于合并或分裂点的选择。这样的决定是非常关键的，因为一旦一组对象被合并或者分裂，下一步的处理将在新生的簇上进行。己做的处理不能被撤销，聚类之间也不能交换对象。如果在某一步没有很好地选择合并或分裂的决定，可能会导致低质量的聚类结果。而且，这种聚类方法不具有很好的可伸缩性，因为合并或分裂的决定需要检查和估算大量的对象或簇。
+
+%一个层次的聚类方法是根据给定的簇间距离度量准则，构造和维护一棵由簇和子簇形成的聚类树，直至满足某个终结条件为止。根据层次分解是自底向上还是自顶向下形成，层次聚类方法可以分为凝聚的(agglomerative) 和分裂的(divisive)。一个纯粹的层次聚类方法的聚类质量受限于如下特点:一旦一个合并或分裂被执行，就不能修正。
+%
+%
+%一般来说，有两种类型的层次聚类方法:
+%\begin{enumerate}
+%  \item 凝聚的层次聚类:这种自底向上的策略首先将每个对象作为一个簇，然后合并这些原子簇为越来越大的簇，直到所有的对象都在一个簇中，或者某个终结条件被满足。绝大多数层次聚类方法属于这一类，它们只是在簇间相似度的定义上有所不同。
+%  \item 分裂的层次聚类:这种自顶向下的策略与凝聚的层次聚类相反，它首先将所有对象置于一个簇中，然后逐步细分为越来越小的簇，直到每个对象自成一簇，或者达到了某个终结条件，例如达到了某个希望的簇数目，或者两个最近的簇之间的距离超过了某个闭值。
+%\end{enumerate}
+%
+%层次聚类算法的困难在于合并或分裂点的选择。这样的决定是非常关键的，因为一旦一组对象被合并或者分裂，下一步的处理将在新生的簇上进行。己做的处理
+%不能被撤销，聚类之间也不能交换对象。如果在某一步没有很好地选择合并或分裂
+%的决定，可能会导致低质量的聚类结果。而且，这种聚类方法不具有很好的可伸缩
+%性，因为合并或分裂的决定需要检查和估算大量的对象或簇。
+
+
+
+
+
+
+对于任意两个集簇之间的距离度量\cite{Sibson1973,Defays1977}，有四种主要的策略：
+
+\begin{figure}
+\subfloat[Single策略]{
+\begin{minipage}[b]{0.25\textwidth}
+\centering\label{fig:chapter5:hc:dis:single}
+\includegraphics[width=1\textwidth]{./Chapters/Part2/single-link.eps}
+\end{minipage} }
+\subfloat[Complete策略]{
+\begin{minipage}[b]{0.25\textwidth} \label{fig:chapter5:hc:dis:complete}
+\centering
+\includegraphics[width=1\textwidth]{./Chapters/Part2/complete-link.eps}
+\end{minipage} }
+\subfloat[Average策略]{
+\begin{minipage}[b]{0.25\textwidth} \label{fig:chapter5:hc:dis:average}
+\centering
+\includegraphics[width=1\textwidth]{./Chapters/Part2/average-link.eps}
+\end{minipage} }
+\subfloat[Mean策略]{
+\begin{minipage}[b]{0.25\textwidth} \label{fig:chapter5:hc:dis:mean}
+\centering
+\includegraphics[width=1\textwidth]{./Chapters/Part2/mean-link.eps}
+\end{minipage} }
+\caption{任意两个集簇之间的距离度量策略} \label{fig:chapter5:hc:dis}
+\end{figure}
+
+
+%\begin{figure}
+%\begin{minipage}{0.25\linewidth}
+%\centering
+%\includegraphics[width=1\textwidth]{./Chapters/Part2/single-link.eps}
+%\caption{Single策略}\label{fig:chapter5:hc:dis:single}
+%\end{minipage}%
+%\begin{minipage}{0.25\linewidth}
+%\centering
+%\includegraphics[width=1\textwidth]{./Chapters/Part2/complete-link.eps}
+%\caption{Complete策略}\label{fig:chapter5:hc:dis:complete}
+%\end{minipage}%
+%\begin{minipage}{0.25\linewidth}
+%\centering
+%\includegraphics[width=1\textwidth]{./Chapters/Part2/average-link.eps}
+%\caption{Average策略}\label{fig:chapter5:hc:dis:average}
+%\end{minipage}%
+%\begin{minipage}{0.25\linewidth}
+%\centering
+%\includegraphics[width=1\textwidth]{./Chapters/Part2/mean-link.eps}
+%\caption{Mean策略}\label{fig:chapter5:hc:dis:mean}
+%\end{minipage}
+%\\
+%\caption{任意两个集簇之间的距离度量策略}\label{fig:chapter5:hc:dis}
+%\end{figure}
+
+
+
+
+\begin{enumerate}[1)]
+  \item 最小距离(Single-Link):如图~\ref{fig:chapter5:hc:dis:single} 所示，是指用两个集簇中所有对象的最近距离代表两个集簇间的距离。公式为~\ref{equ:chapter4:hc:single}
+\begin{equation}\label{equ:chapter4:hc:single}
+  d_{single}(C_i,C_j)=\min_{\forall x\in C_i,y\in C_j}||x-y||
+\end{equation}
+  \item 最大距离(Complete-Link):如图~\ref{fig:chapter5:hc:dis:complete} 所示，是指用两个集簇中所有对象的最远距离代表两个集簇间的距离。公式为~\ref{equ:chapter4:hc:complete}
+\begin{equation}\label{equ:chapter4:hc:complete}
+    d_{complete}(C_i,C_j)=\max_{\forall x\in C_i,y\in C_j}||x-y||
+\end{equation}
+  \item 平均距离(Average-Link):如图~\ref{fig:chapter5:hc:dis:average} 所示，是指用两个集簇中所有对象间的距离的平均距离代表两个集簇间的距离。假设$n_i$ 是集簇$C_i$ 中对象的个数，$n_j$是集簇$C_j$中对象的个数，公式为~\ref{equ:chapter4:hc:average}
+\begin{equation}\label{equ:chapter4:hc:average}
+    d_{average}(C_i,C_j)=\frac{1}{n_in_j}\sum_{x\in C_i}\sum_{y\in C_j}||x-y||
+\end{equation}
+  \item 平均值距离(Mean-Link):如图~\ref{fig:chapter5:hc:dis:mean} 所示，是指用两个集簇中各自中心点之间的距离代表两个集簇间的距离。假设$m_i$是簇$C_i$的平均值，$m_j$是集簇$C_j$的平均值，公式为~\ref{equ:chapter4:hc:mean}
+\begin{equation}\label{equ:chapter4:hc:mean}
+    d_{mean}(C_i,C_j)=||m_i-m_j||
+\end{equation}
+\end{enumerate}
+
+可以看到，上述公式都用到了对象x与对象y的距离度量，经典的层次聚类里的聚类度量采用的欧式距离，但是欧式距离不适合符号属性数据的度量。本文研究是的是符号属性数据的聚类，因此我们要重新的两个对象之间的距离度量，受到k-Modes算法的启发，这里我们也采用简单的差异测度作为符号属性对象度量，并且，考虑到半监督的因素，我们加大了有类标数据的相异或者相似程度。
+
+\begin{defn}
+假设数据集$X=X^L\bigcup X^U\in R^m$，其中$X^L$为有类标数据，$X^U$为无类标数据，$m$为符号属性的个数，则$x_i,x_j\in X$的半监督差异测度定义为
+\begin{equation}\label{equ:chapter4:hc:semidis}
+  d(x_i,x_j)\left\{
+  \begin{array}{ll}
+    -m & x_i\in X^L \wedge x_j\in X^L \wedge d_i=d_j \\
+    m & x_i\in X^L \wedge x_j\in X^L \wedge d_i\neq d_j\\
+    \sum^m_{j=1}\delta(x_{ij},z_{lj})  & otherwise
+  \end{array}
+  \right.
+\end{equation}
+\end{defn}
+
+通过重新定义了两个对象的距离，也就是我们这里的差异测度，不仅可以度量两个符号属性对象，还可以将有监督的信息考虑进去。如果两个对象都是有类标的，如果类标相等则等于$-m$，这样就将两个簇之间距离“拉近”；反之，如果两个对象有类标并且类标不同，则它们的距离为最大值，这样就将所属这两个对象的两个簇“推远”。
+\begin{figure}
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.25\textwidth,angle=90]{./Chapters/Part2/fig1.eps}\\
+  \caption{基于分裂组合的半监督聚类示意图}\label{fig:chapter4:splitmerge}
+\end{figure}
+
+\begin{algorithm}[H]
+\caption{基于分裂重组合的半监督聚类算法}
+\begin{algorithmic}[1]\label{alg:chapter4:semiHC}
+\REQUIRE 数据集$X=X^U \cup X^L$和聚类个数$k$
+\ENSURE 聚类划分结果$C=\{C_1,C_2,\ldots,C_k\}$
+\STATE 计算$R^U$得到划分$X/R^U$
+\STATE 计算$R^L$得到划分$X/(R^U \cap R^L)$，此时有$t$个集簇，记作$C'=\{C_1,C_2,\ldots,C_t\}$
+\STATE 按照簇之间的度量策略，找到最符合策略的两个簇$C_i$和$C_i$ 组合，形成一个新簇并且$t=t-1$。判断如果$t=k$，算法停止，返回剩下的簇；否则返回step3。
+\end{algorithmic}
+\end{algorithm}
+
+
+基于分裂重组合的符号属性数据半监督聚类算法示意图如图~\ref{fig:chapter4:splitmerge}所示，给定数据集$X$，其中包括无监督数据$X^U$和有监督数据$X^L$。通过公式~\ref{equ:chapter4:equivalentrelation}首先得到了等价关系$R^U$，进而得到了第一阶段划分$X/R^U$，记做1st-Partition，然后再根据有监督信息计算等价关系$R^L$，得到第二阶段划分2nd-Partition。 最后在用层次聚类的方法合并各个划分，直到最后剩下$k$个簇算法停止。为了能让层次聚类适用于符号属性数据并且能利用有监督信息更好的“指导”聚类，优化聚类效果，我们重新定义了距离公式，代替了传统的欧式距离，加大了有类标数据的相似或者相异程度，以影响聚类结果，具体算法如算法~\ref{alg:chapter4:semiHC}。
+
+
+
+
+\section{实验与分析}
+
+\input{./Chapters/Part2/chapter4_datainfo}
+\input{./Chapters/Part2/chapter4_figs}
+\input{./Chapters/Part2/chapter4_tabs}
+
+
+\section{小结}
+本章提出了一种基于分裂再组合的半监督聚类方法，它是通过对整个数据集先分裂再组合进行聚类，首先利用了无监督和有监督信息的等价关系，对属性集划分成一个个小的簇，然后再将这些小簇通过不同集簇间距离度量策略的层次聚类的方法组合得到最终的划分。并比较了不同的分裂策略和组合策略。实验表明，该方法能随着带类标的比重不断加大，效果不断提升。
+
+

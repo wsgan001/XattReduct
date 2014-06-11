@@ -1,0 +1,57 @@
+
+
+\comment{
+%##############AC##########
+\begin{table}
+\centering\caption{比较ACC:参数为Alpha=0.60 Ensize=15 Lpercent=0.15}
+\label{tab:chapter3:dataevaluate:ac}
+ \resizebox{\textwidth}{!}{ %
+\begin{tabular}{lccccccccc}
+\toprule
+\multirow{3}{*}{\centering $Datasets$}
+&\multicolumn{2}{c}{$w\_voting$}
+&\multicolumn{2}{c}{$s\_w\_voting$}
+&\multicolumn{2}{c}{$random\_w\_voting$}
+&\multicolumn{2}{c}{$random\_s\_w\_voting$}
+&\multicolumn{1}{c}{$single\_kmodes$}\\
+\cmidrule{2-10}
+&ACC$\pm$Std&$\rho$-Value&ACC$\pm$Std&$\rho$-Value&ACC$\pm$Std&$\rho$-Value&ACC$\pm$Std&$\rho$-Value&ACC$\pm$Std\\
+\midrule
+Audiology & 36.68$\pm$4.77 & 0.34\Large- & 36.86$\pm$5.29 & 0.32\Large- & 42.79$\pm$6.98 & 0.00\Large\textcolor{red}{\checkmark} & 43.05$\pm$8.65 & 0.01\Large\textcolor{red}{\checkmark} & 35.00$\pm$2.74\\
+Balloons & 81.00$\pm$6.58 & 0.00\Large\textcolor{red}{\checkmark} & 83.00$\pm$4.83 & 0.00\Large\textcolor{red}{\checkmark} & 61.00$\pm$15.78 & 0.69\Large- & 62.00$\pm$17.51 & 0.84\Large- & 63.50$\pm$10.29\\
+BreastCancer & 52.41$\pm$1.93 & 0.08\Large- & 52.55$\pm$1.54 & 0.06\Large- & 58.92$\pm$7.95 & 0.18\Large- & 57.69$\pm$8.81 & 0.41\Large- & 55.28$\pm$3.12\\
+CarEvaluation & 35.58$\pm$4.22 & 0.41\Large- & 35.46$\pm$4.28 & 0.33\Large- & 46.78$\pm$5.24 & 0.00\Large\textcolor{red}{\checkmark} & 47.22$\pm$4.66 & 0.00\Large\textcolor{red}{\checkmark} & 37.60$\pm$5.12\\
+Chess & 57.30$\pm$2.74 & 0.04\Large\textcolor{red}{\checkmark} & 57.63$\pm$2.54 & 0.01\Large\textcolor{red}{\checkmark} & 52.59$\pm$1.49 & 0.14\Large- & 53.20$\pm$2.84 & 0.59\Large- & 53.95$\pm$2.46\\
+Hayes & 37.80$\pm$2.07 & 0.24\Large- & 38.03$\pm$2.22 & 0.64\Large- & 43.79$\pm$5.66 & 0.02\Large\textcolor{red}{\checkmark} & 45.23$\pm$3.75 & 0.00\Large\textcolor{red}{\checkmark} & 38.56$\pm$2.19\\
+Lenses & 50.42$\pm$9.10 & 0.91\Large- & 53.75$\pm$7.47 & 0.31\Large- & 65.83$\pm$10.72 & 0.00\Large\textcolor{red}{\checkmark} & 66.67$\pm$9.21 & 0.00\Large\textcolor{red}{\checkmark} & 50.00$\pm$7.08\\
+Lympho & 45.95$\pm$3.70 & 0.27\Large- & 48.45$\pm$4.43 & 0.05\Large- & 45.81$\pm$6.08 & 0.18\Large- & 46.62$\pm$3.74 & 0.06\Large- & 43.24$\pm$5.14\\
+Monks & 60.24$\pm$4.15 & 0.09\Large- & 59.92$\pm$2.90 & 0.03\Large\textcolor{red}{\checkmark} & 53.55$\pm$2.61 & 0.02\Large$\mathbf{\times}$ & 55.48$\pm$2.87 & 0.42\Large- & 56.61$\pm$3.56\\
+Mushroom & 88.28$\pm$2.39 & 0.05\Large\textcolor{red}{\checkmark} & 89.00$\pm$0.74 & 0.03\Large\textcolor{red}{\checkmark} & 82.29$\pm$8.27 & 0.34\Large- & 79.92$\pm$8.81 & 0.73\Large- & 78.70$\pm$12.62\\
+Nursery & 30.29$\pm$3.56 & 0.06\Large- & 31.08$\pm$2.80 & 0.33\Large- & 45.82$\pm$14.87 & 0.01\Large\textcolor{red}{\checkmark} & 48.92$\pm$12.85 & 0.00\Large\textcolor{red}{\checkmark} & 32.11$\pm$3.48\\
+Promoters & 60.28$\pm$7.63 & 0.38\Large- & 62.36$\pm$9.83 & 0.25\Large- & 63.21$\pm$8.39 & 0.13\Large- & 61.79$\pm$8.43 & 0.23\Large- & 56.60$\pm$6.93\\
+Shuttle & 62.00$\pm$4.50 & 0.24\Large- & 61.33$\pm$4.22 & 0.20\Large- & 62.00$\pm$7.06 & 0.13\Large- & 60.00$\pm$7.70 & 0.09\Large- & 69.33$\pm$15.14\\
+Soybean & 64.80$\pm$4.71 & 0.07\Large- & 64.70$\pm$4.36 & 0.09\Large- & 60.73$\pm$6.72 & 0.67\Large- & 61.95$\pm$6.23 & 0.42\Large- & 59.17$\pm$6.75\\
+SPECT & 63.11$\pm$1.08 & 0.36\Large- & 63.37$\pm$0.91 & 0.29\Large- & 66.10$\pm$2.90 & 0.01\Large\textcolor{red}{\checkmark} & 66.67$\pm$5.39 & 0.01\Large\textcolor{red}{\checkmark} & 61.09$\pm$6.03\\
+Trains & 66.00$\pm$11.74 & 0.54\Large- & 70.00$\pm$11.55 & 0.30\Large- & 67.00$\pm$9.49 & 0.27\Large- & 66.00$\pm$8.43 & 0.56\Large- & 63.00$\pm$10.59\\
+Tumor & 31.77$\pm$2.01 & 0.00\Large\textcolor{red}{\checkmark} & 30.88$\pm$1.81 & 0.01\Large\textcolor{red}{\checkmark} & 30.03$\pm$2.08 & 0.25\Large- & 29.73$\pm$2.47 & 0.44\Large- & 29.17$\pm$2.07\\
+Voting & 86.28$\pm$0.19 & 0.85\Large- & 86.46$\pm$0.17 & 0.36\Large- & 86.80$\pm$1.07 & 0.11\Large- & 87.24$\pm$1.16 & 0.04\Large\textcolor{red}{\checkmark} & 86.23$\pm$0.63\\
+\midrule
+Average&\multicolumn{2}{c}{ 56.12 } &\multicolumn{2}{c}{ 56.94 } &\multicolumn{2}{c}{ 57.50 } &\multicolumn{2}{c}{ 57.74 } &\multicolumn{1}{c}{ 53.84 } \\
+\midrule
+Win/Tie/Lose&\multicolumn{2}{c}{ 4/14/0 } &\multicolumn{2}{c}{ 5/13/0 } &\multicolumn{2}{c}{ 6/11/1 } &\multicolumn{2}{c}{ 7/11/0 } &\multicolumn{1}{c}{}\\
+\bottomrule
+\end{tabular}
+}%
+\end{table}
+
+
+
+
+
+
+
+我们分别取权值比例系数Alpha为0.6，聚类集成个数Ensize为$15$，有类标数据比例Lpercent为$15\%$，计算10次得到一组准确率和一组归一化互结果，然后再和单独k-Modes算法的10次准确率和归一化互结果做置信率为0.05的T-test显著性检测，如表格~\ref{tab:chapter3:dataevaluate:ac}和~\ref{tab:chapter3:dataevaluate:nmi} 所示。其中，符号“$\Large{\textcolor{red}{\checkmark}}$”表示该策略结果有显著性差异并且优于单独k-Modes算法，符号“$\Large{\mathbf{\times}}$”表示劣于单独k-Modes 算法，符号“$\Large{-}$”表示两组结果没有显著性差异。
+
+实验结果表明，本文提出的基于权值投票的半监督聚类集成的四种不同策略都要比单独的k-Modes算法有明显的优势，不管是从均值还是从T-test的结果上看。从全部的数据集来看，Random\_W\_Voting和Random\_S\_W\_Voting策略比W\_Voting和S\_W\_Voting策略稍占优势。而这两两策略之间差异不是很明显。
+
+

@@ -1,0 +1,92 @@
+\chapter{最小冗余最大相关半监督属性选择}
+\label{chapter:semimrmr}
+
+
+无监督属性选择方法与有监督属性选择方法最主要的区别为:样本没有标记类别信息参与属性选择分析。无监督特征选择方法主要通过统计分析数据本身的信息来评价特征。而半监督特征选择则既要考虑有监督信息，又要考虑无监督信息，用这些信息共同作用参与属性选择。
+
+本章基于mRMR算法，提出了一种最大相关最小冗余半监督属性选择，重新定义了属性的相关性和属性间的冗余，不仅考虑无监督信息，而且还单个属性对整个属性子集的作用。
+
+\section{最小冗余最大相关算法}
+半监督属性选择的问题描述为：
+假设数据集$X= X^L\bigcup X^U$，$A=\{a_1,a_2,\ldots,a_m\}$为$m$ 个属性的集合。特征选择的目的是找到一个属性子集$S$能“较好的”一致地描述属性全集$A$.
+
+在有监督学习中，最小冗余最大相关(mRMR)属性选择算法的目的是从属性空间中寻找与目标类别有最大相关性且相互之间具有最少冗余性的$m$ 个特征\cite{Peng2005}，最大相关和最小冗余
+的定义为
+\begin{equation}\label{equ:chapter5:depred}
+  \begin{split}
+    \max D(S,d), & D=\frac{1}{|S|}\sum_{a_i\in S}MI(a_i,d) \\
+     \min R(S), & R=\frac{1}{|S|^2}\sum_{a_i,a_j\in A}MI(a_i,a_j)
+  \end{split}
+\end{equation}
+
+式子中的$d$代表类标。该算法定义了一个算子$\Phi$联合相关性和冗余性,并叫做最小冗余最大相关(minimal-redundancy-maximal-relevance)\cite{Ding2005}。
+\begin{equation}\label{equ:chapter5:mrmr}
+  \max\Phi(D,R),\Phi=D-R
+\end{equation}
+
+实际上，贪心式的搜索策略可以用来找到$\Phi$的近似最优解。假设我们已经有属性子集$S_{m-1}$，当中包含$m-1$个属性。接下来的目标就是从$\{A-S_{m-1}\}$中寻找第$m$ 个属性最大化算子$\Phi$。因此贪心式算法优化的约束条件为：
+\begin{equation}\label{equ:chapter5:mrmr:con}
+  \max_{a_j\in \{A-S_{m-1}\}}\bigg[MI(x_j,d)-\frac{1}{m-1}\sum_{a_i\in S_{m-1}}MI(a_j,a_i)\bigg]
+\end{equation}
+
+\section{半监督最小冗余最大相关SemiMRMR算法}
+\subsection{相关性冗余性}
+因为mRMR算法为有监督的属性选择方法，对于半监督数据，我们结合有监督信息和无监督信息，重新定义了属性的相关性和属性间的冗余：
+\begin{defn}
+假设数据集$X= X^L\bigcup X^U$，$A=\{a_1,a_2,\ldots,a_m\}$为$m$ 个属性的集合，对于有类标数据$X^L$，$d$为决策属性，属性$a_i$ 的相关性定义为
+\begin{equation}\label{equ:chapter5:semimrmr:dep}
+   D(a_i)=MI^L(a_i,d)
+\end{equation}
+$MI^L$代表只拿有类标数据的计算$a_i$和$D$的互信息。对于无类标数据$X^U$，假设我们已经有属性子集$S_{m}$，当中包含$m-1$个属性，不在$S_{m}$子集中的属性$a_i$的冗余性定义为
+\begin{equation}
+  R(a_i,S_m)=MI^{U}(a_i,S_m)+\sum_{a_j\in S_m}\frac{MI(a_i,a_j)}{|S_m|}
+\end{equation}
+$MI^L$代表只拿无类标数据的计算互信息。$R(a_i,S_m)$分两部分，第一部分是代选属性$a_i$与已经选出来的整个属性子集的$S_m$的冗余性，第二部分是代选属性$a_i$与已经选出来的属性子集的$S_m$中的单个属性$a_j$的平均冗余性。
+\end{defn}
+因此贪心式算法优化的约束条件为：
+\begin{equation}\label{equ:chapter5:mrmr:con}
+  \max_{a_j\in \{A-S_{m-1}\}}\bigg[MI^L(a_j,d)-MI^{U}(a_j,S_m-1)-\frac{1}{|S_{m-1}|}\sum_{a_i\in S_{m-1}}MI(a_j,a_i)\bigg]
+\end{equation}
+%Max(SU（a1，d）+SU(a1,A)-\sum a2\in A SU(a1,a2))
+\subsection{停止准则}
+mRMR算法要指定属性选择的个数，如果对于没有先验知识的数据集很难达到最好的效果。我们提出的SemiMRMR 算法基于计算已经找到的属性子集的信息和熵条件熵，首先我们定义信息熵和条件熵。
+\begin{defn}
+假设$S$为一个属性子集，$d$为决策属性，则相应的信息和条件熵为：
+\begin{equation}\label{equ:charpter5:entropy}
+\begin{split}
+  H(S) =& -\sum p(s_i)\log p(s_i) \\
+   H(d|S)= &-\sum_i\sum_j p(d_i,s_j)\log p(d_i|s_j)
+\end{split}
+\end{equation}
+\end{defn}
+当属性子集所携带的信息量能和全集的信息相等，或者大体相当，我们就认为该属性子集可以作为一个属性选择。因此如果当前选择的属性子集为$S_m$，我们定义算法的停止准则为：
+\begin{equation}\label{equ:charpter5:semimrmr:}
+   |H^{U}(S_m)-H^{U}(A)|<\alpha  \vee |H^{L}(d|S_m)-H^{L}(d|A)|<\alpha
+\end{equation}
+式子中$\alpha\geqslant 0$是一个松弛变量，控制停止准则条件的强弱。$\alpha$越小，停止准则条件越强，所得的属性选择个数越多；$\alpha$越大，停止准则条件越弱，所得的属性选择数目越小，算法流程如算法~\ref{alg:chapter5:semimrmr}所示。
+
+\begin{algorithm}[H]
+\caption{最小冗余最大相关半监督属性选择算法SemiMRMR}
+\begin{algorithmic}[1]\label{alg:chapter5:semimrmr}
+\REQUIRE 数据集$X=X^U \cup X^L$，松弛变量$\alpha$
+\ENSURE 特征选择$S$
+\STATE $S=\varnothing$
+\STATE $S=S \cup \max_{a_i\in A}MI^L(a_i,d)$
+\WHILE {$|H^{U}(S)-H^{U}(A)|\geqslant\alpha \wedge |H^{L}(d|S)-H^{L}(d|A)|\geqslant\alpha$}
+\STATE $a_i = \max_{a_i\in \{A-S\}}\bigg[MI^L(a_i,d)-MI^{U}(a_i,S)-\frac{1}{|S|}\sum_{a_j\in S}MI(a_i,a_j)\bigg]$
+\STATE $S=S \cup \{a_i\}$
+\ENDWHILE
+\STATE 输出特征选择$S$
+\end{algorithmic}
+\end{algorithm}
+
+
+\section{实验与分析}
+\input{./Chapters/Part3/chapter5_datainfo}
+\input{./Chapters/Part3/chapter5_figs}
+\input{./Chapters/Part3/chapter5_tabs}
+
+\section{小结}
+本章基于mRMR算法，提出了一种最大相关最小冗余半监督属性选择，重新定义了属性的相关性和属性间的冗余，不仅考虑无监督信息，而且还单个属性对整个属性子集的作用。而并提出了一种新的停止准则来控制属性选择的个数。实验结果表明，在分类预测精度和聚类效果不降低的前提下，SemiMRMR能有效降低数据集的维度。
+
+

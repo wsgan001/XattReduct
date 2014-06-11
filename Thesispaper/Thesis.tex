@@ -1,0 +1,296 @@
+\documentclass[oneside]{ZJUthesis}
+%\documentclass[twoside]{ZJUthesis}
+% 该文档中首字符为“%”的均为注释行，不会在论文中出现
+
+% 论文默认为双面模式，需单面模式请将第一行换为如下所示：
+% \documentclass[oneside]{ZJUthesis}
+
+% 取消目录中链接的颜色，方便打印
+% 如需颜色，请将“false”改为“true”
+%\hypersetup{colorlinks=true}
+\hypersetup{colorlinks=false}
+\newcommand{\comment}{}  %显示图和表格 不注释
+%\newcommand{\comment}[1]{} % 不显示图和表格 注释
+%\usepackage[notref]{showkeys}
+\DeclareMathOperator*{\argmax}{argmax}
+\usepackage{algorithmic}
+\usepackage{algorithm}
+
+
+\renewcommand{\algorithmicrequire}{\textbf{输入:}}
+\renewcommand{\algorithmicensure}{\textbf{输出:}}
+\floatname{algorithm}{算法}
+
+%我们用CTeX包提供的类文件来写文章，用 tocloft 来定制目录格式时候，会出现目录项标题重叠现象。
+\usepackage[titles]{tocloft}
+\makeatletter
+\renewcommand{\numberline}[1]{%
+\settowidth\@tempdimb{#1\hspace{0.5em}}%
+\ifdim\@tempdima<\@tempdimb%
+  \@tempdima=\@tempdimb%
+\fi%
+\hb@xt@\@tempdima{\@cftbsnum #1\@cftasnum\hfil}\@cftasnumb}
+\makeatother
+
+\usepackage{enumerate}
+\usepackage{subfig}
+%\usepackage{subfigure}
+
+
+
+% \theoremstyle{plain}
+%  \newtheorem{algo}{算法~}[chapter]
+%  \newtheorem{thm}{定理~}[chapter]
+%  \newtheorem{lem}[thm]{引理~}
+%  \newtheorem{prop}[thm]{命题~}
+%  \newtheorem{cor}[thm]{推论~}
+%\theoremstyle{definition}
+%  \newtheorem{defn}{定义~}[chapter]
+%  \newtheorem{conj}{猜想~}[chapter]
+%  \newtheorem{exmp}{例~}[chapter]
+%  \newtheorem{rem}{注~}
+%  \newtheorem{case}{情形~}
+%\theoremstyle{break}
+%  \newtheorem{bthm}[thm]{定理~}
+%  \newtheorem{blem}[thm]{引理~}
+%  \newtheorem{bprop}[thm]{命题~}
+%  \newtheorem{bcor}[thm]{推论~}
+%\renewcommand{\proofname}{\bf 证明}
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 正文字体设定
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\fangsong
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 论文封面部分
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 中文封面内容
+
+% 中图分类号
+\classification{TP391}
+
+% 单位代码
+\serialnumber{10335}
+
+% 密级，如需密级则将其前“%”去掉
+\SecretLevel{公开}
+
+% 学号
+\PersonalID{21021238}
+
+
+%符号属性数据的半监督聚类与属性选择
+%Semi-supervised Clustering and Feature Selection for Symbolic Data
+
+
+\title{符号属性数据的半监督聚类}
+% 如果标题一行写不下，就写成两行，在下面的命令里写第二行，不需要两行则注释掉
+\titletl{与属性选择}
+
+%英文题目
+\Etitle{Semi-supervised Clustering and}
+% 如果一行写不下，同中文题目设定，一行写不下则写两行，不需要就注释掉
+\Etitletl{Feature Selection for Symbolic Data}
+
+% 作者
+\author{王文涛}
+
+\degree{硕士}
+
+% 导师
+\supervisor{代建华副教授}
+
+% 合作导师，如果有的话，去掉注释，
+%\cpsupervisor{某 \quad某某}
+
+% 专业名称
+\major{计算机应用技术}
+
+% 研究方向
+\researchdm{人工智能\hspace{1cm}机器学习}
+
+% 所属学院
+\institute{计算机科学与技术学院}
+
+%论文提交日期
+%\submitdate{2013-01-05}
+\submitdate{2013-01-05}
+
+% 答辨日期
+\defenddate{2013-03-07}
+
+% 生成封面
+\makeCoverPage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 预答辩不加内容开始
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 中文题名页内容
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 论文评阅人信息 注意两字名与三字名，两字职称与三字职称的写法，便于对齐
+% 多余的名额直接注释掉即可，比如三个评阅人，把评阅人D，E注释掉即可
+%\reviewersA{XXX\hspace{1.5em}XX\hspace{1.5em}XXXXX\hspace{1em}}
+%\reviewersB{X\quad X\hspace{1.5em}XX\hspace{1.5em}XXXXX\hspace{1em}}
+%\reviewersC{\hspace{1.5em}\hspace{1.5em}}
+%\reviewersD{\hspace{1.5em}\hspace{1.5em}\hspace{1em}}
+%\reviewersE{\hspace{1.5em}\hspace{1.5em}\hspace{1em}}
+\reviewersA{梁荣华\hspace{1.5em}教授\hspace{1.5em}浙江工业大学}
+\reviewersB{曹飞龙\hspace{1.5em}教授\hspace{1.5em}中国计量学院}
+\reviewersC{廖备水\hspace{1.5em}副教授\hspace{1.5em}浙江大学}
+ 
+
+
+
+% 答辩委员会信息，如果某一个单位比较长，
+% 请在其它较短后面补上{hspace{Xem}}，X是比最长的单位名少几个字
+% 如果实际人数少于6人，多余的注释掉即可
+%\chairman{XXX\hspace{1.5em}XX\hspace{1.5em}XXXXXX}
+%\commissionerA{X\quad X\hspace{1.5em}XX\hspace{1.5em}XXXXX\hspace{1em}}
+%\commissionerB{X\quad X\hspace{1.5em}XX\hspace{1.5em}XXXXXX}
+%\commissionerC{X\quad X\quad XXX\quad XXXXX}
+%\commissionerD{ \quad \hspace{1.5em} \hspace{1.5em} \hspace{1em}}
+%\commissionerE{ \quad \hspace{1.5em} \hspa\chairman{XXX\hspace{1.5em}XX\hspace{1.5em}XXXXXX}
+\chairman{张志华\hspace{1.5em}教授\hspace{1.5em}浙江大学}
+\commissionerA{廖备水\hspace{1.5em}副教授\hspace{1.5em}浙江大学}
+\commissionerB{郑能干\hspace{1.5em}副教授\hspace{1.5em}浙江大学}
+\commissionerC{代建华\hspace{1.5em}副教授\hspace{1.5em}浙江大学}
+ 
+
+% 生成中文题名页
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 英文封面内容，硕士论文可不要此页
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 英文题名
+\englishtitle{Semi-supervised Clustering and Feature}
+% 如果题名一行写不下，就写到第二行，不需要则将其注释掉
+\englishtitletl{Selection for Symbolic Data}
+
+% 评阅人信息，名字，职称，单位尽量用简写，否则会写不下
+\EreviewersA{Ronghua Liang\hspace{1.5em}Professor}
+\EreviewersB{Feilong Cao\hspace{1.5em}Professor}
+\EreviewersC{Beishui Liao\hspace{1.5em}Associate Professor}
+\EreviewersD{}
+\EreviewersE{}
+
+
+
+% 答辩委员会信息，同样尽量用简写，否则会写不下
+\Echairman{Zhihua Zhang\hspace{1.5em}Professor}
+\EcommissionerA{Beishui Liao\hspace{1.5em}Associate Professor}
+\EcommissionerB{Nenggan Zheng\hspace{1.5em}Associate Professor}
+\EcommissionerC{Jianhua Dai\hspace{1.5em}Associate Professor}
+\EcommissionerD{}
+\EcommissionerE{}
+
+
+
+% 生成英文封面
+\makeenglishtitle
+
+
+%\Enewauthor{Wang Wentao}
+%\Enewsupervisor{Dai Jianhua}
+%\Enewsubject{Computer Application Technology}
+%\Enewcollege{Computer Science and Technology}
+%
+%\makenewenglishtitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 原创声明与版权协议页
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 生成原创声明与版权协议页
+\makeOSandCPRTpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 预答辩不加内容结束
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 论文部分开始
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ZJUAbstractfrontmatter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 摘要
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{./Chapters/abstractC}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 英文摘要
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{./Chapters/abstractE}
+
+
+\ZJUfrontmatter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 目录页
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ZJUcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 插图列表
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ZJUListofFigures
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 表格列表
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ZJUListofTables
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 正文内容部分开始
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ZJUmainmatter
+
+
+
+
+\include{./Chapters/chapter1}
+\include{./Chapters/chapter2}
+\include{./Chapters/Part1/chapter3}
+\include{./Chapters/Part2/chapter4}
+\include{./Chapters/Part3/chapter5}
+\include{./Chapters/Part4/chapter6}
+\include{./Chapters/chapter7}
+
+
+\ZJUbackmatter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 参考文献
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ZJUthesisbib
+\bibliographystyle{ZJUthesis}
+%\bibliographystyle{zjugbay}
+%\bibliographystyle{zjugbno}
+\bibliography{thesisbib}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% 附录
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\appendix
+%\input{./Chapters/appendix}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 发表论文目录
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{./Chapters/publications}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% 致谢页
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{./Chapters/thanks}
+
+\end{document}

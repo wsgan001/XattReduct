@@ -1,0 +1,124 @@
+
+%因此，我们提出的SemiMRMR在有监督和无监督的框架下具有一定价值。
+
+
+\comment{
+%##############SEMIMRMR--Classifer-AC###########
+\begin{table*}[htbp]
+\centering\caption{算法SemiMRMR比较分类精度Accuracy参数：Alpha=0.1 Lercent=50\%}
+\label{tab:chapter5:ex:classifier:ac}
+\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lcccccccccccc}
+\toprule
+\multirow{3}{*}{\centering $Datasets$}
+&\multicolumn{2}{c}{$\#Features$}
+&\multicolumn{2}{c}{$NBC$}
+&\multicolumn{2}{c}{$C4.5$}
+&\multicolumn{2}{c}{$JRip$}
+&\multicolumn{2}{c}{$PART$}
+&\multicolumn{2}{c}{$CART$}\\
+\cmidrule{2-13}
+&\multirow{2}{*}{\centering $SemiMRMR$}& \multirow{2}{*}{\centering $ FullFeature$}&$SemiMRMR$&$FullFeature$&$SemiMRMR$&$FullFeature$&$SemiMRMR$&$FullFeature$&$SemiMRMR$&$FullFeature$&$SemiMRMR$&$FullFeature$\\
+\cmidrule{4-13}
+&&&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std\\
+\midrule
+Colic&16&22&82.28$\pm$0.70&81.47$\pm$0.35&84.24$\pm$0.51&84.84$\pm$0.35&84.73$\pm$0.70&84.35$\pm$0.53&82.55$\pm$1.18&80.92$\pm$1.09&85.82$\pm$0.12&84.46$\pm$0.59\\
+Credit&10&15&85.77$\pm$0.19&86.17$\pm$0.26&86.84$\pm$0.59&86.61$\pm$0.51&86.46$\pm$0.62&86.58$\pm$0.49&86.29$\pm$0.63&85.88$\pm$0.67&86.55$\pm$1.02&84.61$\pm$0.44\\
+Diabetes&7&8&79.04$\pm$0.21&77.84$\pm$0.11&78.65$\pm$0.95&77.50$\pm$0.92&78.33$\pm$0.54&77.32$\pm$0.56&77.84$\pm$0.72&77.06$\pm$0.76&78.46$\pm$1.16&76.74$\pm$0.80\\
+Heart-cleveland&11&13&57.62$\pm$1.03&56.30$\pm$1.11&55.78$\pm$1.49&53.00$\pm$2.42&53.07$\pm$0.72&53.93$\pm$0.50&54.79$\pm$0.52&54.46$\pm$2.07&55.71$\pm$1.33&53.86$\pm$1.18\\
+Heart-hungarian&9&13&81.16$\pm$0.71&84.69$\pm$0.24&82.38$\pm$0.37&80.48$\pm$0.85&80.68$\pm$0.74&79.73$\pm$0.89&81.16$\pm$0.30&81.02$\pm$0.91&80.20$\pm$1.09&78.98$\pm$1.55\\
+Heart-statlog&12&13&84.07$\pm$0.37&83.78$\pm$0.41&82.30$\pm$1.44&82.07$\pm$1.33&82.74$\pm$1.03&83.78$\pm$1.40&83.56$\pm$0.77&83.63$\pm$1.86&82.89$\pm$0.84&82.59$\pm$0.79\\
+Hepatitis&11&19&88.13$\pm$0.58&84.00$\pm$0.54&83.35$\pm$1.90&80.26$\pm$1.91&81.81$\pm$2.16&80.00$\pm$2.28&85.03$\pm$1.54&82.32$\pm$0.87&83.48$\pm$0.98&79.61$\pm$0.35\\
+Ionosphere&10&34&92.02$\pm$0.00&90.77$\pm$0.38&88.89$\pm$0.73&89.74$\pm$0.67&91.17$\pm$0.97&91.51$\pm$1.16&90.66$\pm$0.42&89.91$\pm$0.32&91.40$\pm$0.79&90.31$\pm$0.83\\
+Musk2&61&166&88.20$\pm$0.40&85.26$\pm$0.27&90.69$\pm$0.18&90.83$\pm$1.00&90.21$\pm$0.62&90.01$\pm$1.05&90.69$\pm$0.47&90.69$\pm$0.46&90.16$\pm$0.28&90.27$\pm$0.50\\
+Promoters&3&57&78.49$\pm$0.79&90.38$\pm$0.79&80.19$\pm$0.00&79.81$\pm$1.58&79.62$\pm$1.27&81.13$\pm$2.58&78.30$\pm$0.67&85.28$\pm$1.43&80.19$\pm$0.00&74.34$\pm$2.86\\
+SPECT&10&22&69.74$\pm$0.67&68.84$\pm$0.62&71.69$\pm$0.94&69.96$\pm$1.33&72.51$\pm$0.33&72.06$\pm$1.49&66.44$\pm$2.46&68.01$\pm$2.46&72.51$\pm$0.21&73.03$\pm$0.37\\
+Voting&3&16&95.63$\pm$0.00&90.30$\pm$0.19&95.63$\pm$0.00&96.37$\pm$0.34&95.63$\pm$0.00&95.45$\pm$0.44&95.63$\pm$0.00&95.36$\pm$0.70&95.63$\pm$0.00&95.54$\pm$0.13\\
+WDBC&7&30&95.08$\pm$0.18&95.85$\pm$0.10&95.78$\pm$0.12&95.85$\pm$0.10&95.43$\pm$0.28&96.34$\pm$0.19&95.96$\pm$0.00&95.99$\pm$0.23&95.64$\pm$0.26&94.13$\pm$0.92\\
+\midrule
+Average&13.08&32.92&82.86&82.74&82.80&82.10&82.49&82.48&82.22&82.35&82.97&81.42\\
+\bottomrule
+\end{tabular}
+}%
+\end{table*}
+
+
+%##############SEMIMRMR--Cluster-AC###########
+\begin{table*}[htbp]
+\centering\caption{算法SemiMRMR比较聚类精度ACC参数：Alpha=0.1 Lercent=50\%}
+\label{tab:chapter5:ex:cluster:acc}
+\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lcccccccccc}
+\toprule\multirow{3}{*}{\centering $Datasets$}
+&\multicolumn{2}{c}{$KModes$}
+&\multicolumn{2}{c}{$EM$}
+&\multicolumn{2}{c}{$Cobweb$}
+&\multicolumn{2}{c}{$FarthestFirst$}
+&\multicolumn{2}{c}{$CLOPE$}\\
+\cmidrule{2-11}
+&$SemiMRMR$&$FullFeature$&$SemiMRMR$&$FullFeature$&$SemiMRMR$&$FullFeature$&$SemiMRMR$&$FullFeature$&$SemiMRMR$&$FullFeature$\\
+\cmidrule{2-11}
+&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC$\pm$Std&ACC&ACC\\
+\midrule
+Colic&62.23$\pm$10.85&58.10$\pm$8.19&77.45$\pm$0.00&66.85$\pm$0.00&72.61$\pm$3.87&66.25$\pm$2.75&63.26$\pm$8.97&57.12$\pm$8.89&79.08&74.18\\
+Credit&72.55$\pm$10.48&75.45$\pm$11.76&86.67$\pm$0.00&73.33$\pm$0.00&83.86$\pm$0.91&71.28$\pm$2.49&65.22$\pm$5.66&60.03$\pm$8.59&80.58&79.71\\
+Diabetes&60.05$\pm$7.24&60.05$\pm$7.24&66.41$\pm$0.00&66.41$\pm$0.00&65.73$\pm$1.19&65.73$\pm$1.19&57.14$\pm$8.83&57.14$\pm$8.83&76.30&67.06\\
+Heart-cleveland&47.46$\pm$4.47&41.65$\pm$6.54&49.44$\pm$3.53&48.32$\pm$0.18&59.74$\pm$0.47&59.67$\pm$1.94&44.75$\pm$4.15&44.42$\pm$7.24&64.36&57.76\\
+Heart-hungarian&82.31$\pm$1.42&82.31$\pm$1.42&84.08$\pm$0.15&84.08$\pm$0.15&81.70$\pm$1.69&81.70$\pm$1.69&77.35$\pm$5.61&77.35$\pm$5.61&80.27&77.21\\
+Heart-statlog&82.67$\pm$0.41&82.67$\pm$0.41&80.37$\pm$0.00&80.74$\pm$0.00&80.89$\pm$1.25&79.41$\pm$3.24&68.89$\pm$12.17&65.63$\pm$14.34&72.22&74.07\\
+Hepatitis&73.03$\pm$5.19&69.81$\pm$11.39&83.23$\pm$0.00&75.23$\pm$0.58&80.13$\pm$1.06&79.48$\pm$0.29&79.61$\pm$5.19&71.87$\pm$11.81&85.16&83.87\\
+Ionosphere&87.35$\pm$1.02&88.77$\pm$0.96&90.03$\pm$0.00&89.17$\pm$0.00&89.12$\pm$1.22&79.43$\pm$2.87&85.36$\pm$3.11&78.35$\pm$2.38&95.73&95.73\\
+Musk2&73.86$\pm$6.07&61.67$\pm$11.30&82.60$\pm$0.00&53.61$\pm$0.00&82.18$\pm$0.00&82.18$\pm$0.00&77.54$\pm$13.20&57.00$\pm$9.66&86.28&87.98\\
+Promoters&62.08$\pm$7.53&61.32$\pm$10.05&61.89$\pm$5.88&57.17$\pm$5.99&73.96$\pm$16.70&69.43$\pm$3.10&62.64$\pm$3.10&58.11$\pm$6.21&100.00&100.00\\
+SPECT&69.44$\pm$0.78&64.64$\pm$5.11&68.54$\pm$0.00&60.30$\pm$0.00&68.31$\pm$1.94&63.52$\pm$5.48&66.07$\pm$6.43&59.48$\pm$4.96&72.28&58.80\\
+Voting&87.22$\pm$0.50&87.03$\pm$0.72&87.82$\pm$0.00&87.82$\pm$0.00&81.98$\pm$6.78&82.90$\pm$3.44&86.90$\pm$2.17&86.11$\pm$2.63&83.91&82.76\\
+WDBC&94.48$\pm$0.10&92.79$\pm$0.48&95.25$\pm$0.00&94.55$\pm$0.00&92.76$\pm$1.15&83.23$\pm$2.46&84.08$\pm$13.55&88.51$\pm$8.37&97.19&89.63\\
+\midrule
+Average&73.44&71.25&77.98&72.12&77.92&74.17&70.68&66.24&82.57&79.14\\
+\bottomrule
+\end{tabular}
+}%
+\end{table*}
+
+
+%##############SEMIMRMR--Cluster-NMI###########
+\begin{table*}[htbp]
+\centering\caption{算法SemiMRMR比较聚类归一化互信息NMI参数：Alpha=0.1 Lercent=50\%}
+\label{tab:chapter5:ex:cluster:nmi}
+\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lcccccccccc}
+\toprule\multirow{3}{*}{\centering $Datasets$}
+&\multicolumn{2}{c}{$KModes$}
+&\multicolumn{2}{c}{$EM$}
+&\multicolumn{2}{c}{$Cobweb$}
+&\multicolumn{2}{c}{$FarthestFirst$}
+&\multicolumn{2}{c}{$CLOPE$}\\
+\cmidrule{2-11}
+&$SemiMRMR$&$FullFeature$&$SemiMRMR$&$FullFeature$&$SemiMRMR$&$FullFeature$&$SemiMRMR$&$FullFeature$&$SemiMRMR$&$FullFeature$\\
+\cmidrule{2-11}
+&NMI$\pm$Std&NMI$\pm$Std&NMI$\pm$Std&NMI$\pm$Std&NMI$\pm$Std&NMI$\pm$Std&NMI$\pm$Std&NMI$\pm$Std&NMI&NMI\\
+\midrule
+Colic&0.110$\pm$0.073&0.075$\pm$0.049&0.205$\pm$0.000&0.109$\pm$0.000&0.149$\pm$0.042&0.084$\pm$0.043&0.043$\pm$0.085&0.063$\pm$0.063&0.096&0.082\\
+Credit&0.197$\pm$0.113&0.234$\pm$0.131&0.429$\pm$0.000&0.158$\pm$0.000&0.351$\pm$0.017&0.135$\pm$0.029&0.082$\pm$0.058&0.051$\pm$0.068&0.087&0.098\\
+Diabetes&0.069$\pm$0.022&0.069$\pm$0.022&0.089$\pm$0.000&0.089$\pm$0.000&0.049$\pm$0.011&0.049$\pm$0.011&0.022$\pm$0.018&0.022$\pm$0.018&0.062&0.053\\
+Heart-cleveland&0.210$\pm$0.014&0.210$\pm$0.022&0.242$\pm$0.007&0.224$\pm$0.003&0.178$\pm$0.016&0.179$\pm$0.026&0.164$\pm$0.018&0.143$\pm$0.054&0.151&0.139\\
+Heart-hungarian&0.157$\pm$0.013&0.157$\pm$0.013&0.181$\pm$0.010&0.181$\pm$0.010&0.130$\pm$0.012&0.130$\pm$0.012&0.119$\pm$0.038&0.119$\pm$0.038&0.140&0.139\\
+Heart-statlog&0.343$\pm$0.022&0.343$\pm$0.022&0.281$\pm$0.000&0.287$\pm$0.000&0.269$\pm$0.036&0.252$\pm$0.055&0.147$\pm$0.154&0.136$\pm$0.164&0.129&0.167\\
+Hepatitis&0.150$\pm$0.016&0.159$\pm$0.052&0.300$\pm$0.000&0.187$\pm$0.005&0.175$\pm$0.059&0.143$\pm$0.042&0.103$\pm$0.079&0.077$\pm$0.109&0.109&0.175\\
+Ionosphere&0.468$\pm$0.021&0.478$\pm$0.044&0.507$\pm$0.000&0.475$\pm$0.000&0.474$\pm$0.042&0.272$\pm$0.054&0.393$\pm$0.063&0.236$\pm$0.041&0.173&0.168\\
+Musk2&0.139$\pm$0.063&0.051$\pm$0.033&0.206$\pm$0.000&0.026$\pm$0.000&0.093$\pm$0.023&0.039$\pm$0.027&0.168$\pm$0.084&0.040$\pm$0.023&0.078&0.092\\
+Promoters&0.066$\pm$0.082&0.072$\pm$0.092&0.051$\pm$0.053&0.024$\pm$0.026&0.251$\pm$0.256&0.110$\pm$0.032&0.053$\pm$0.023&0.032$\pm$0.030&0.151&0.150\\
+SPECT&0.105$\pm$0.013&0.066$\pm$0.043&0.104$\pm$0.000&0.028$\pm$0.000&0.079$\pm$0.023&0.050$\pm$0.046&0.073$\pm$0.046&0.016$\pm$0.015&0.064&0.068\\
+Voting&0.474$\pm$0.016&0.465$\pm$0.034&0.486$\pm$0.000&0.486$\pm$0.000&0.375$\pm$0.098&0.376$\pm$0.068&0.460$\pm$0.047&0.439$\pm$0.074&0.320&0.276\\
+WDBC&0.678$\pm$0.004&0.611$\pm$0.017&0.711$\pm$0.000&0.680$\pm$0.000&0.614$\pm$0.047&0.385$\pm$0.063&0.429$\pm$0.199&0.510$\pm$0.192&0.216&0.258\\
+\midrule
+Average&0.244&0.230&0.292&0.227&0.245&0.169&0.174&0.145&0.137&0.143\\
+\bottomrule
+\end{tabular}
+}%
+\end{table*}
+}
+
+当Alpha=0.1，Lercent=50\%，我们提出的SemiMRMR算法所选的属性子集和属性全集分别通过不同的分类器得到分类精度，不同的聚类算法得到了准确率和归一化互信息作比较。分类器有NaiveBayes Classifier(NBC)，C4.5，JRip，PART和CART。聚类器有k-Modes，EM，Cobweb，FarthestFirst和CLOPE。
+
+实验结果分别在表格~\ref{tab:chapter5:ex:classifier:ac}，~\ref{tab:chapter5:ex:cluster:acc}和~\ref{tab:chapter5:ex:cluster:acc}中显示，其中，在表格~\ref{tab:chapter5:ex:classifier:ac}有列出了属性选择个数。对于分类算法来说，属性选择后的数据集和全部属性的数据集在分类精度上可以保持大体相当，说明属性选择后能保持原来全集上的信息没有太大损失。从另一个方面，对于聚类算法来说，属性选择能明显提高聚类效果，从聚类评价指标ACC和NMI来看，都要比在属性全集上做聚类有较明显的优势。

@@ -1,0 +1,87 @@
+
+
+\comment{
+%##############AC##########
+\begin{table*}
+\centering\caption{比较ACC:参数为 Lpercent=0.50}
+\label{tab:chapter4:dataevaluate:ac}
+ \resizebox{\textwidth}{!}{ %
+\begin{tabular}{lccccccccc}
+\toprule
+\multirow{3}{*}{\centering $Datasets$}
+&\multicolumn{2}{c}{$SINGLE$}
+&\multicolumn{2}{c}{$COMPLETE$}
+&\multicolumn{2}{c}{$AVERAGE$}
+&\multicolumn{2}{c}{$MEAN$}
+&\multicolumn{1}{c}{$BestHCM$}\\
+\cmidrule{2-10}
+&ACC$\pm$Std&$\rho$-Value&ACC$\pm$Std&$\rho$-Value&ACC$\pm$Std&$\rho$-Value&ACC$\pm$Std&$\rho$-Value&ACC$\pm$Std\\
+\midrule
+Audiology & 26.81$\pm$0.86 & 0.01\Large\textcolor{red}{\checkmark} & 50.71$\pm$0.67 & 0.00\Large\textcolor{red}{\checkmark} & 43.81$\pm$1.85 & 0.00\Large\textcolor{red}{\checkmark} & 50.62$\pm$0.67 & 0.00\Large\textcolor{red}{\checkmark} & 24.78$\pm$0.00\\
+Balance & 58.62$\pm$13.13 & 0.11\Large- & 66.43$\pm$1.26 & 0.00\Large\textcolor{red}{\checkmark} & 69.60$\pm$0.99 & 0.00\Large\textcolor{red}{\checkmark} & 54.66$\pm$0.68 & 0.00\Large\textcolor{red}{\checkmark} & 46.40$\pm$0.00\\
+Balloons & 69.00$\pm$4.18 & 0.10\Large- & 76.00$\pm$8.22 & 0.04\Large\textcolor{red}{\checkmark} & 77.00$\pm$10.37 & 0.06\Large- & 63.00$\pm$4.47 & 0.37\Large- & 65.00$\pm$0.00\\
+BreastCancer & 69.86$\pm$0.16 & 0.00\Large$\mathbf{\times}$ & 64.69$\pm$8.23 & 0.15\Large- & 66.71$\pm$2.49 & 0.01\Large$\mathbf{\times}$ & 76.43$\pm$1.12 & 0.00\Large\textcolor{red}{\checkmark} & 71.33$\pm$0.00\\
+Hayes & 49.85$\pm$9.84 & 0.11\Large- & 53.64$\pm$7.47 & 0.02\Large\textcolor{red}{\checkmark} & 62.58$\pm$1.15 & 0.00\Large\textcolor{red}{\checkmark} & 57.27$\pm$1.38 & 0.00\Large\textcolor{red}{\checkmark} & 40.91$\pm$0.00\\
+Lenses & 65.83$\pm$5.43 & 0.01\Large\textcolor{red}{\checkmark} & 65.00$\pm$7.57 & 0.03\Large\textcolor{red}{\checkmark} & 67.50$\pm$6.18 & 0.01\Large\textcolor{red}{\checkmark} & 65.83$\pm$3.49 & 0.00\Large\textcolor{red}{\checkmark} & 54.17$\pm$0.00\\
+Lympho & 54.46$\pm$0.37 & 0.07\Large- & 54.86$\pm$4.15 & 0.68\Large- & 71.76$\pm$3.49 & 0.00\Large\textcolor{red}{\checkmark} & 61.35$\pm$1.46 & 0.00\Large\textcolor{red}{\checkmark} & 54.05$\pm$0.00\\
+Monks & 56.45$\pm$12.18 & 0.89\Large- & 74.68$\pm$1.22 & 0.00\Large\textcolor{red}{\checkmark} & 73.71$\pm$2.83 & 0.00\Large\textcolor{red}{\checkmark} & 67.42$\pm$2.65 & 0.00\Large\textcolor{red}{\checkmark} & 57.26$\pm$0.00\\
+Shuttle & 100.00$\pm$0.00 & 1.00\Large- & 73.33$\pm$20.55 & 0.04\Large$\mathbf{\times}$ & 100.00$\pm$0.00 & 1.00\Large- & 100.00$\pm$0.00 & 1.00\Large- & 100.00$\pm$0.00\\
+Soybean & 86.56$\pm$0.30 & 0.37\Large- & 57.81$\pm$10.44 & 0.00\Large$\mathbf{\times}$ & 90.79$\pm$1.00 & 0.00\Large\textcolor{red}{\checkmark} & 87.88$\pm$0.30 & 0.00\Large\textcolor{red}{\checkmark} & 86.42$\pm$0.00\\
+SPECT & 58.73$\pm$0.41 & 0.18\Large- & 60.67$\pm$10.93 & 0.67\Large- & 70.26$\pm$1.26 & 0.00\Large\textcolor{red}{\checkmark} & 68.84$\pm$2.22 & 0.00\Large\textcolor{red}{\checkmark} & 58.43$\pm$0.00\\
+TicTac & 65.45$\pm$0.00 & 1.00\Large- & 73.07$\pm$1.37 & 0.00\Large\textcolor{red}{\checkmark} & 67.18$\pm$0.93 & 0.01\Large\textcolor{red}{\checkmark} & 72.09$\pm$0.47 & 0.00\Large\textcolor{red}{\checkmark} & 65.45$\pm$0.00\\
+Trains & 70.00$\pm$10.00 & 0.09\Large- & 68.00$\pm$8.37 & 0.10\Large- & 74.00$\pm$5.48 & 0.00\Large\textcolor{red}{\checkmark} & 70.00$\pm$7.07 & 0.03\Large\textcolor{red}{\checkmark} & 60.00$\pm$0.00\\
+Tumor & 25.90$\pm$0.57 & 0.83\Large- & 50.86$\pm$0.45 & 0.00\Large\textcolor{red}{\checkmark} & 49.97$\pm$4.81 & 0.00\Large\textcolor{red}{\checkmark} & 51.21$\pm$0.49 & 0.00\Large\textcolor{red}{\checkmark} & 25.96$\pm$0.00\\
+Voting & 61.43$\pm$0.25 & 0.18\Large- & 64.28$\pm$9.65 & 0.57\Large- & 61.43$\pm$0.25 & 0.18\Large- & 62.90$\pm$0.66 & 0.01\Large\textcolor{red}{\checkmark} & 61.61$\pm$0.00\\
+\midrule
+Average&\multicolumn{2}{c}{ 61.26 } &\multicolumn{2}{c}{ 63.60 } &\multicolumn{2}{c}{ 69.75 } &\multicolumn{2}{c}{ 67.30 } &\multicolumn{1}{c}{ 58.12 } \\
+\midrule
+Win/Tie/Lose&\multicolumn{2}{c}{ 2/12/1 } &\multicolumn{2}{c}{ 8/5/2 } &\multicolumn{2}{c}{ 11/3/1 } &\multicolumn{2}{c}{ 13/2/0 } &\multicolumn{1}{c}{}\\
+\bottomrule
+\end{tabular}
+}%
+\end{table*}
+%##############NMI##########
+\begin{table*}
+\centering\caption{比较NMI:参数为 Lpercent=0.50}
+\label{tab:chapter4:dataevaluate:nmi}
+ \resizebox{\textwidth}{!}{ %
+\begin{tabular}{lccccccccc}
+\toprule
+\multirow{3}{*}{\centering $Datasets$}
+&\multicolumn{2}{c}{$SINGLE$}
+&\multicolumn{2}{c}{$COMPLETE$}
+&\multicolumn{2}{c}{$AVERAGE$}
+&\multicolumn{2}{c}{$MEAN$}
+&\multicolumn{1}{c}{$BestHCM$}\\
+\cmidrule{2-10}
+&NMI$\pm$Std&$\rho$-Value&NMI$\pm$Std&$\rho$-Value&NMI$\pm$Std&$\rho$-Value&NMI$\pm$Std&$\rho$-Value&NMI$\pm$Std\\
+\midrule
+Audiology & 0.11$\pm$0.01 & 0.01\Large\textcolor{red}{\checkmark} & 0.44$\pm$0.01 & 0.00\Large\textcolor{red}{\checkmark} & 0.39$\pm$0.02 & 0.00\Large\textcolor{red}{\checkmark} & 0.39$\pm$0.02 & 0.00\Large\textcolor{red}{\checkmark} & 0.09$\pm$0.00\\
+Balance & 0.19$\pm$0.15 & 0.05\Large- & 0.17$\pm$0.02 & 0.00\Large\textcolor{red}{\checkmark} & 0.20$\pm$0.02 & 0.00\Large\textcolor{red}{\checkmark} & 0.11$\pm$0.01 & 0.00\Large\textcolor{red}{\checkmark} & 0.01$\pm$0.00\\
+Balloons & 0.10$\pm$0.07 & 0.10\Large- & 0.25$\pm$0.16 & 0.04\Large\textcolor{red}{\checkmark} & 0.26$\pm$0.23 & 0.10\Large- & 0.04$\pm$0.01 & 0.44\Large- & 0.04$\pm$0.00\\
+BreastCancer & 0.00$\pm$0.00 & 0.00\Large$\mathbf{\times}$ & 0.05$\pm$0.09 & 0.43\Large- & 0.21$\pm$0.11 & 0.02\Large\textcolor{red}{\checkmark} & 0.15$\pm$0.02 & 0.00\Large\textcolor{red}{\checkmark} & 0.02$\pm$0.00\\
+Hayes & 0.14$\pm$0.11 & 0.09\Large- & 0.14$\pm$0.06 & 0.01\Large\textcolor{red}{\checkmark} & 0.38$\pm$0.02 & 0.00\Large\textcolor{red}{\checkmark} & 0.11$\pm$0.01 & 0.00\Large\textcolor{red}{\checkmark} & 0.02$\pm$0.00\\
+Lenses & 0.24$\pm$0.09 & 0.37\Large- & 0.28$\pm$0.12 & 0.91\Large- & 0.24$\pm$0.12 & 0.44\Large- & 0.19$\pm$0.01 & 0.00\Large$\mathbf{\times}$ & 0.28$\pm$0.00\\
+Lympho & 0.02$\pm$0.00 & 0.07\Large- & 0.22$\pm$0.05 & 0.00\Large\textcolor{red}{\checkmark} & 0.23$\pm$0.03 & 0.00\Large\textcolor{red}{\checkmark} & 0.10$\pm$0.02 & 0.00\Large\textcolor{red}{\checkmark} & 0.02$\pm$0.00\\
+Monks & 0.08$\pm$0.16 & 0.41\Large- & 0.19$\pm$0.02 & 0.00\Large\textcolor{red}{\checkmark} & 0.18$\pm$0.04 & 0.00\Large\textcolor{red}{\checkmark} & 0.09$\pm$0.03 & 0.00\Large\textcolor{red}{\checkmark} & 0.02$\pm$0.00\\
+Shuttle & 1.00$\pm$0.00 & 1.00\Large- & 0.28$\pm$0.41 & 0.02\Large$\mathbf{\times}$ & 1.00$\pm$0.00 & 1.00\Large- & 1.00$\pm$0.00 & 1.00\Large- & 1.00$\pm$0.00\\
+Soybean & 0.01$\pm$0.01 & 0.37\Large- & 0.10$\pm$0.04 & 0.00\Large\textcolor{red}{\checkmark} & 0.27$\pm$0.03 & 0.00\Large\textcolor{red}{\checkmark} & 0.22$\pm$0.06 & 0.00\Large\textcolor{red}{\checkmark} & 0.00$\pm$0.00\\
+SPECT & 0.00$\pm$0.00 & 0.18\Large- & 0.10$\pm$0.14 & 0.20\Large- & 0.27$\pm$0.03 & 0.00\Large\textcolor{red}{\checkmark} & 0.10$\pm$0.02 & 0.00\Large\textcolor{red}{\checkmark} & 0.00$\pm$0.00\\
+TicTac & 0.00$\pm$0.00 & 1.00\Large- & 0.16$\pm$0.02 & 0.00\Large\textcolor{red}{\checkmark} & 0.20$\pm$0.01 & 0.00\Large\textcolor{red}{\checkmark} & 0.11$\pm$0.01 & 0.00\Large\textcolor{red}{\checkmark} & 0.00$\pm$0.00\\
+Trains & 0.25$\pm$0.14 & 0.09\Large- & 0.12$\pm$0.10 & 0.85\Large- & 0.30$\pm$0.09 & 0.01\Large\textcolor{red}{\checkmark} & 0.16$\pm$0.14 & 0.44\Large- & 0.11$\pm$0.00\\
+Tumor & 0.06$\pm$0.00 & 0.25\Large- & 0.44$\pm$0.02 & 0.00\Large\textcolor{red}{\checkmark} & 0.38$\pm$0.02 & 0.00\Large\textcolor{red}{\checkmark} & 0.40$\pm$0.01 & 0.00\Large\textcolor{red}{\checkmark} & 0.06$\pm$0.00\\
+Voting & 0.00$\pm$0.00 & 0.18\Large- & 0.07$\pm$0.16 & 0.39\Large- & 0.00$\pm$0.00 & 0.18\Large- & 0.04$\pm$0.00 & 0.00\Large\textcolor{red}{\checkmark} & 0.00$\pm$0.00\\
+\midrule
+Average&\multicolumn{2}{c}{ 0.15 } &\multicolumn{2}{c}{ 0.20 } &\multicolumn{2}{c}{ 0.30 } &\multicolumn{2}{c}{ 0.21 } &\multicolumn{1}{c}{ 0.11 } \\
+\midrule
+Win/Tie/Lose&\multicolumn{2}{c}{ 1/13/1 } &\multicolumn{2}{c}{ 9/5/1 } &\multicolumn{2}{c}{ 11/4/0 } &\multicolumn{2}{c}{ 11/3/1 } &\multicolumn{1}{c}{}\\
+\bottomrule
+\end{tabular}
+}%
+\end{table*}
+
+}
+
+然后我们取有类标数据比例Lpercent为$50\%$，计算10次得到一组准确率和一组归一化互信息，这里有类标的对象是随机选择，然后再和最优的层次聚类算法中四种不同集簇距离策略的10 次准确率和归一化互信息做置信率为0.05的T-test显著性检测，如表格~\ref{tab:chapter4:dataevaluate:ac}和~\ref{tab:chapter4:dataevaluate:nmi}所示。 这里要指出的是，因为层次聚类不存在随机性，所以结果中最后一列的标准差都为0。
+
+实验结果可以看出，对于聚类评价指标ACC和NMI，在有类标数据比例Lpercent为$50\%$，Single策略与层次聚类的效果大致相同，Complete策略要略优于层次聚类，而Avergage 策略和Mean 策略则是比层次聚类有明显的优势。

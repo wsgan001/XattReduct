@@ -1,0 +1,32 @@
+由于层次聚类的运行时间较长，所以我们去掉了上一章的数据集规模较大的几个数据，数据集的详细情况见表~\ref{tab:chapter4:datainfo}。为了验证本文提出的算法，我们将集簇度量策略和单独层次算法进行比较，分别计算它们的准确率ACC和归一化互信息NMI。
+
+\comment{
+%##############DataINFO#############
+\begin{table}
+\centering
+\caption{数据集信息}\label{tab:chapter4:datainfo}
+\resizebox{\textwidth}{!}{ %
+\begin{tabular}{lcccl}
+\toprule
+ $DataSet$ & $\#Instances$ & $\#Attribute$ & $\#Classes$ & $Abstract$\\
+\midrule
+Audiology & 226 & 69 & 24 & Standardized version of the original audiology database\\
+Balance & 625 & 4 & 3 & Balance scale weight \& distance database\\
+Balloons & 20 & 4 & 2 & Data previously used in cognitive psychology experiment\\
+BreastCancer & 286 & 9 & 2 & Breast Cancer Data (Restricted Access)\\
+Hayes & 132 & 4 & 3 & Hayes-Roth Data Set from topic: human subjects study\\
+Lenses & 24 & 4 & 3 & Database for fitting contact lenses\\
+Lympho & 148 & 18 & 4 & Lymphography domain data set\\
+Monks & 124 & 6 & 2 & A set of artificial domains over the same attribute space\\
+Shuttle & 15 & 6 & 2 & Shuttle Landing Control Data Set\\
+Soybean & 302 & 35 & 3 & Large version of Michalski's famous soybean disease database\\
+SPECT & 267 & 22 & 2 & Single Proton Emission Computed Tomography (SPECT) images. \\
+TicTac & 958 & 9 & 2 & Binary classification task on tic-tac-toe game\\
+Trains & 10 & 32 & 2 & 2 data formats (structured, one-instance-per-line)\\
+Tumor & 339 & 17 & 22 & Primary Tumor Data Set from Ljubljana Oncology Institute\\
+Voting & 435 & 16 & 2 & 1984 United Stated Congressional Voting Records\\
+\bottomrule
+\end{tabular}
+}%
+\end{table}
+}
